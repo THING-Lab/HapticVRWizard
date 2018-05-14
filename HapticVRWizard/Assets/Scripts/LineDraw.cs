@@ -24,16 +24,4 @@ public class LineDraw : MonoBehaviour {
 		line.positionCount = pointsList.Count;
 		line.SetPosition(pointsList.Count - 1, (Vector3)pointsList[pointsList.Count - 1]);
 	}
-
-	// public void setPointsList(newList) {
-	// 	line.SetVertexCount(0);
-  //   pointsList.RemoveRange(0, pointsList.Count);
-
-	// 	pointsList = new List<Vector3>(newList);
-
-	// 	line.SetVertexCount(pointsList.Count);
-	// 	for(int i = 0; i < pointsList.Count; i++) {
-	// 		line.SetPosition(i, (Vector3)pointsList[i]);
-	// 	}
-	// }
 }

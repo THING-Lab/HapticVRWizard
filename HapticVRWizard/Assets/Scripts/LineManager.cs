@@ -5,17 +5,19 @@ using UnityEngine;
 public class LineManager : MonoBehaviour {
 	public GameObject line;
 	public List<GameObject> allLines;
+	private int currentObject;
 
 	// Use this for initialization
 	void Start () {
-		
+		allLines = new List<GameObject>();
 	}
 
 	public void StartEntity() {
-
+		GameObject newLine = (GameObject)Instantiate(line);
+		allLines.Add(newLine);
 	}
 
-	public void UpdateEntity() {
-		
+	public void UpdateEntity(Vector3 point) {
+		allLines[allLines.Count - 1].GetComponent<LineDraw>().addPoint(point);
 	}
 }

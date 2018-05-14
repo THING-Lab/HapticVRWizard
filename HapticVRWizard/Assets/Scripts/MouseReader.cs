@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class MouseReader : MonoBehaviour {
 	public bool isMousePressed;
-	private List<Vector3> pointsList;
+	private Vector3 lastPos;
+	public GameObject toolManager;
 
 	// Use this for initialization
 	void Start () {
 		isMousePressed = false;
-		pointsList = new List<Vector3>();
+		lastPos = new Vector3(-1000, -1000, -1000);
 	}
 	
 	// Update is called once per frame
@@ -18,7 +19,7 @@ public class MouseReader : MonoBehaviour {
 		// this clears out the line buffer :(
 		if (Input.GetMouseButtonDown(0)) {
 			isMousePressed = true;
-			pointsList.RemoveRange(0, pointsList.Count);
+			toolManager.GetComponent<LineManager>().StartEntity();
 		}
 
 		if (Input.GetMouseButtonUp(0)) {
@@ -33,10 +34,8 @@ public class MouseReader : MonoBehaviour {
 			Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(mx, my, -1f));
 			mousePos.z = 0;
 
-			// This is just checking to see if the mouse moved, should change to threshold
-			if (!pointsList.Contains(mousePos)) {
-				pointsList.Add(mousePos);
-			}
+			// Add something to check for mouse movement so we don't have extra points
+			toolManager.GetComponent<LineManager>().UpdateEntity(mousePos);
 		}
 	}
 }
