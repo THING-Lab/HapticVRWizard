@@ -51,4 +51,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c90f95ac38a3f4d188c2c418b272be45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isMousePressed: 0
+  pointsList: []

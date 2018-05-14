@@ -19,7 +19,7 @@ public class MouseReader : MonoBehaviour {
 		// this clears out the line buffer :(
 		if (Input.GetMouseButtonDown(0)) {
 			isMousePressed = true;
-			toolManager.GetComponent<LineManager>().StartEntity();
+			toolManager.GetComponent<LineManager>().StartStroke();
 		}
 
 		if (Input.GetMouseButtonUp(0)) {
@@ -35,7 +35,7 @@ public class MouseReader : MonoBehaviour {
 			mousePos.z = 0;
 
 			// Add something to check for mouse movement so we don't have extra points
-			toolManager.GetComponent<LineManager>().UpdateEntity(mousePos);
+			toolManager.GetComponent<LineManager>().UpdateStroke(mousePos);
 		}
 	}
 }

@@ -12,12 +12,12 @@ public class LineManager : MonoBehaviour {
 		allLines = new List<GameObject>();
 	}
 
-	public void StartEntity() {
+	public void StartStroke() {
 		GameObject newLine = (GameObject)Instantiate(line);
 		allLines.Add(newLine);
 	}
 
-	public void UpdateEntity(Vector3 point) {
+	public void UpdateStroke(Vector3 point) {
 		allLines[allLines.Count - 1].GetComponent<LineDraw>().addPoint(point);
 	}
 }
