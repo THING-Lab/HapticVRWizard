@@ -4,19 +4,12 @@ using UnityEngine;
 
 public class LineDraw : MonoBehaviour {
 	private LineRenderer line;
-	public List<Vector3> pointsList;
+	private List<Vector3> pointsList = new List<Vector3>();
 
 	// Use this for initialization
-	void Start() {
-		line = gameObject.AddComponent<LineRenderer>();
+	void Awake() {
+		line = this.GetComponent<LineRenderer>();
 		line.material = new Material(Shader.Find("Particles/Additive"));
-		line.positionCount = 0;
-		line.startWidth = 0.01f;
-		line.endWidth = 0.01f;
-		line.startColor = Color.green;
-		line.endColor = Color.green;
-		line.useWorldSpace = true;
-		pointsList = new List<Vector3>();
 	}
 
 	public void addPoint(Vector3 point) {
