@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LineManager : MonoBehaviour {
+public class LineTool : MonoBehaviour, ITool {
 	public GameObject line;
 	public List<GameObject> allLines;
 	private int currentObject;

@@ -10,16 +10,19 @@ public class MouseReader : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		isMousePressed = false;
+		// Hack to allow for a new position on first
 		lastPos = new Vector3(-1000, -1000, -1000);
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		ITool currentTool = toolManager.GetComponent<ToolManager>().CurrentTool;
+
 		// Determine mouse input state, works only on the frame it's pressed :(
 		// this clears out the line buffer :(
 		if (Input.GetMouseButtonDown(0)) {
 			isMousePressed = true;
-			toolManager.GetComponent<LineManager>().StartStroke();
+			currentTool.StartStroke();
 		}
 
 		if (Input.GetMouseButtonUp(0)) {
@@ -35,7 +38,7 @@ public class MouseReader : MonoBehaviour {
 			mousePos.z = 0;
 
 			// Add something to check for mouse movement so we don't have extra points
-			toolManager.GetComponent<LineManager>().UpdateStroke(mousePos);
+			currentTool.UpdateStroke(mousePos);
 		}
 	}
 }
