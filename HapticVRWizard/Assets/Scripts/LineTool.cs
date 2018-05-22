@@ -4,13 +4,8 @@ using UnityEngine;
 
 public class LineTool : MonoBehaviour, ITool {
 	public GameObject line;
-	public List<GameObject> allLines;
+	public List<GameObject> allLines = new List<GameObject>();
 	private int currentObject;
-
-	// Use this for initialization
-	void Start () {
-		allLines = new List<GameObject>();
-	}
 
 	public void StartStroke() {
 		GameObject newLine = (GameObject)Instantiate(line);

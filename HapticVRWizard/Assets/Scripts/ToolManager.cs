@@ -13,7 +13,7 @@ public class ToolManager : MonoBehaviour {
 	}
 
 	// Use this for initialization
-	void Awake () {
-		currentTool = lineManager.GetComponent<LineTool>();
+	void Start () {
+		currentTool = tubeManager.GetComponent<TubeTool>();
 	}
 }
