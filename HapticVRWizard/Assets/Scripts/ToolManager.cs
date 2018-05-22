@@ -14,6 +14,17 @@ public class ToolManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		// This could be more generic
 		currentTool = tubeManager.GetComponent<TubeTool>();
+	}
+
+	void Update () {
+		if(Input.GetKeyDown(KeyCode.T)) {
+			currentTool = tubeManager.GetComponent<TubeTool>();
+		}
+
+		if(Input.GetKeyDown(KeyCode.L)) {
+			currentTool = lineManager.GetComponent<LineTool>();
+		}
 	}
 }
