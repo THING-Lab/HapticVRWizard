@@ -3,44 +3,45 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MouseReader : MonoBehaviour {
-	public bool isMousePressed;
-	private Vector3 lastPos;
-	public GameObject toolManager;
+	public bool _isMousePressed;
+	private Vector3 _lastPos;
+	public GameObject _toolManager;
+	public float _moveThreshold = 0.02f;
 
 	// Use this for initialization
 	void Start () {
-		isMousePressed = false;
+		_isMousePressed = false;
 		// Hack to allow for a new position on first
-		lastPos = new Vector3(-1000, -1000, -1000);
+		_lastPos = new Vector3(-1000, -1000, -1000);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		ITool currentTool = toolManager.GetComponent<ToolManager>().CurrentTool;
+		ITool currentTool = _toolManager.GetComponent<ToolManager>().CurrentTool;
 
 		// Determine mouse input state, works only on the frame it's pressed :(
 		// this clears out the line buffer :(
 		if (Input.GetMouseButtonDown(0)) {
-			isMousePressed = true;
+			_isMousePressed = true;
 			currentTool.StartStroke();
 		}
 
 		if (Input.GetMouseButtonUp(0)) {
-			isMousePressed = false;
+			_isMousePressed = false;
 		}
 
 		// Drawing line when mouse is moving
-		if (isMousePressed) {
+		if (_isMousePressed) {
 			// Get mouse position
 			float my = Camera.main.pixelHeight - Input.mousePosition.y;
 			float mx = Camera.main.pixelWidth - Input.mousePosition.x;
 			Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(mx, my, -1f));
 			mousePos.z = 0;
 
-			// Add something to check for mouse movement so we don't have extra points
-			if(Vector3.Distance(mousePos, lastPos) >= 0.01f) {
+			// We might need to add more sophisticated position smoothing than this
+			if(Vector3.Distance(mousePos, _lastPos) >= _moveThreshold) {
 				currentTool.UpdateStroke(mousePos);
-				lastPos = mousePos;
+				_lastPos = mousePos;
 			}
 		}
 	}

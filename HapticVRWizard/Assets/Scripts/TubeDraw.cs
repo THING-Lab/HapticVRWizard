@@ -12,6 +12,7 @@ public class TubeDraw : MonoBehaviour {
 	// Mesh Props?
 	private List<Vector3> _verts = new List<Vector3>();
 	private List<int> _tris = new List<int>();
+	private List<Vector2> _uvs = new List<Vector2>();
 	private Vector3 _prevNormal;
 
 	// Use this for initialization
@@ -23,17 +24,22 @@ public class TubeDraw : MonoBehaviour {
 
 	public void addPoint(Vector3 point) {
 		_pointsList.Add(point);
-
+	
 		// Basically Generates the whole mesh
-		// Calc Normal, Calc Direction
-		int pointIndex = _pointsList.Count - 1;
-
-		// Vector3 ringNormal = new Vector3(1.0f, 0.0f, 0.0f);
+		// Defaults for normal and direction
 		Vector3 ringNormal = Vector3.zero;
 		Vector3 direction = point;
-		// Ewwwwwwwww
-		if(_pointsList.Count > 1) {
+		int pointIndex = _pointsList.Count - 1;
+
+		// If there is only one point just create initial ring
+		// Else do all mesh generation steps
+		if(_pointsList.Count == 1) {
+			addVertexRing(pointIndex * _numSegments, point, direction, ringNormal);
+		} else {
+			// Correct direction if more than 1 point so far
 			direction = point - _pointsList[pointIndex - 1];
+
+			// This code is from Pinch draw and I need to comment it properly
 			if(_pointsList.Count == 2) {
 				float angleToUp = Vector3.Angle(direction, Vector3.up);
 
@@ -48,23 +54,24 @@ public class TubeDraw : MonoBehaviour {
 				Vector3 prevPerp = Vector3.Cross(_pointsList[pointIndex - 1] - _pointsList[pointIndex - 2], _prevNormal);
 				ringNormal = Vector3.Cross(prevPerp, point - _pointsList[pointIndex - 1]).normalized;
 			}
-		}
+			// End pinch draw copy pasta
 
-		addVertexRing(pointIndex * _numSegments, point, direction, ringNormal);
-		if(_pointsList.Count > 1) {
-			// Calc Tris
+			// Create vertex ring and Add tris
+			addVertexRing(pointIndex * _numSegments, point, direction, ringNormal);
 			addTriRing();
 
 			// Update mesh
 			_mesh.vertices = _verts.ToArray();
 			_mesh.triangles = _tris.ToArray();
+			_mesh.SetUVs(0, _uvs);
+			// _mesh.SetColors(_colors);
+			_mesh.RecalculateBounds();
 			_mesh.RecalculateNormals();
 		}
 
 		_prevNormal = ringNormal;
 	}
 
-	// int offset, Vector3 ringPosition, Vector3 direction, Vector3 normal, float radiusScale
 	private void addVertexRing(int offset, Vector3 ringPosition, Vector3 direction, Vector3 normal) {
 		for (int i = 0; i < _numSegments; i++) {
 			float angle = 360.0f * (i / (float)(_numSegments));
@@ -73,8 +80,8 @@ public class TubeDraw : MonoBehaviour {
 
 			_verts.Add(ringPosition + ringSpoke);
 			// What is that stuff with UVs and Colors?!?!
-			// _uvs.Add(new Vector2(i / (_parent._drawResolution - 1.0f), 0));
-			// _colors.Add( ColorManager.Instance.GetCurrentColor ());
+			_uvs.Add(new Vector2(i / (_numSegments - 1.0f), 0));
+			// _colors.Add(ColorManager.Instance.GetCurrentColor());
 		}
 	}
 
