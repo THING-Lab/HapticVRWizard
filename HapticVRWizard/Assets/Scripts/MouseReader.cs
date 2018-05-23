@@ -38,7 +38,10 @@ public class MouseReader : MonoBehaviour {
 			mousePos.z = 0;
 
 			// Add something to check for mouse movement so we don't have extra points
-			currentTool.UpdateStroke(mousePos);
+			if(Vector3.Distance(mousePos, lastPos) >= 0.01f) {
+				currentTool.UpdateStroke(mousePos);
+				lastPos = mousePos;
+			}
 		}
 	}
 }

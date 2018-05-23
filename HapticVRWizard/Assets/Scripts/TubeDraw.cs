@@ -28,18 +28,26 @@ public class TubeDraw : MonoBehaviour {
 		// Calc Normal, Calc Direction
 		int pointIndex = _pointsList.Count - 1;
 
-		Vector3 ringNormal = new Vector3(1.0f, 0.0f, 0.0f);
-		// Vector3 ringNormal = Vector3.zero;
+		// Vector3 ringNormal = new Vector3(1.0f, 0.0f, 0.0f);
+		Vector3 ringNormal = Vector3.zero;
 		Vector3 direction = point;
 		// Ewwwwwwwww
 		if(_pointsList.Count > 1) {
 			direction = point - _pointsList[pointIndex - 1];
-			// if(_pointsList.Count == 2) {
+			if(_pointsList.Count == 2) {
+				float angleToUp = Vector3.Angle(direction, Vector3.up);
 
-			// } else {
-			// 	Vector3 prevPerp = Vector3.Cross(_pointsList[pointIndex - 1] - _pointsList[pointIndex - 2], _prevNormal);
-			// 	ringNormal = Vector3.Cross(prevPerp, point - _pointsList[pointIndex - 1]).normalized;
-			// }
+				if (angleToUp < 10 || angleToUp > 170) {
+					ringNormal = Vector3.Cross(direction, Vector3.right);
+				} else {
+					ringNormal = Vector3.Cross(direction, Vector3.up);
+				}
+
+				ringNormal = ringNormal.normalized;
+			} else {
+				Vector3 prevPerp = Vector3.Cross(_pointsList[pointIndex - 1] - _pointsList[pointIndex - 2], _prevNormal);
+				ringNormal = Vector3.Cross(prevPerp, point - _pointsList[pointIndex - 1]).normalized;
+			}
 		}
 
 		addVertexRing(pointIndex * _numSegments, point, direction, ringNormal);
