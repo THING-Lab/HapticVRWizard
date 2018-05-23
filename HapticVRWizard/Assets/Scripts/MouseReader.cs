@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MouseReader : MonoBehaviour {
-	public bool _isMousePressed;
+	private bool _isMousePressed;
 	private Vector3 _lastPos;
 	public GameObject _toolManager;
 	public float _moveThreshold = 0.02f;
