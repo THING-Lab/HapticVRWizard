@@ -156,8 +156,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36f72c26ced7e4d3cb1367462d6a2b13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isMousePressed: 0
-  toolManager: {fileID: 1211958580}
+  _isMousePressed: 0
+  _toolManager: {fileID: 1211958580}
+  _moveThreshold: 0.02
 --- !u!1 &436803749
 GameObject:
   m_ObjectHideFlags: 0

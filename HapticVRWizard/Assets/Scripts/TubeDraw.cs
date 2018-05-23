@@ -15,6 +15,9 @@ public class TubeDraw : MonoBehaviour {
 	private List<Vector2> _uvs = new List<Vector2>();
 	private Vector3 _prevNormal;
 
+	// Should match min move distance
+	public float _meshTailLength = 0.05f;
+
 	// Use this for initialization
 	void Awake() {
 		_meshFilter = gameObject.GetComponent<MeshFilter>();
@@ -22,7 +25,16 @@ public class TubeDraw : MonoBehaviour {
 		_meshFilter.mesh = _mesh;
 	}
 
-	public void addPoint(Vector3 point) {
+	private void UpdateMesh() {
+		_mesh.vertices = _verts.ToArray();
+		_mesh.triangles = _tris.ToArray();
+		_mesh.SetUVs(0, _uvs);
+		// _mesh.SetColors(_colors);
+		_mesh.RecalculateBounds();
+		_mesh.RecalculateNormals();
+	}
+
+	public void AddPoint(Vector3 point) {
 		_pointsList.Add(point);
 	
 		// Basically Generates the whole mesh
@@ -34,7 +46,7 @@ public class TubeDraw : MonoBehaviour {
 		// If there is only one point just create initial ring
 		// Else do all mesh generation steps
 		if(_pointsList.Count == 1) {
-			addVertexRing(pointIndex * _numSegments, point, direction, ringNormal);
+			AddVertexRing(pointIndex * _numSegments, point, direction, ringNormal);
 		} else {
 			// Correct direction if more than 1 point so far
 			direction = point - _pointsList[pointIndex - 1];
@@ -57,36 +69,30 @@ public class TubeDraw : MonoBehaviour {
 			// End pinch draw copy pasta
 
 			// Create vertex ring and Add tris
-			addVertexRing(pointIndex * _numSegments, point, direction, ringNormal);
-			addTriRing();
+			AddVertexRing(pointIndex * _numSegments, point, direction, ringNormal);
+			AddTriRing();
 
-			// Update mesh
-			_mesh.vertices = _verts.ToArray();
-			_mesh.triangles = _tris.ToArray();
-			_mesh.SetUVs(0, _uvs);
-			// _mesh.SetColors(_colors);
-			_mesh.RecalculateBounds();
-			_mesh.RecalculateNormals();
+			UpdateMesh();
 		}
 
 		_prevNormal = ringNormal;
 	}
 
-	private void addVertexRing(int offset, Vector3 ringPosition, Vector3 direction, Vector3 normal) {
+	private void AddVertexRing(int offset, Vector3 ringPosition, Vector3 direction, Vector3 normal) {
 		for (int i = 0; i < _numSegments; i++) {
 			float angle = 360.0f * (i / (float)(_numSegments));
 			Quaternion rotator = Quaternion.AngleAxis(angle, direction.normalized);
 			Vector3 ringSpoke = rotator * normal.normalized * _radius;
 
 			_verts.Add(ringPosition + ringSpoke);
-			// What is that stuff with UVs and Colors?!?!
 			_uvs.Add(new Vector2(i / (_numSegments - 1.0f), 0));
+			// What is that stuff with Colors?!?!
 			// _colors.Add(ColorManager.Instance.GetCurrentColor());
 		}
 	}
 
 	// Connects the most recently added vertex ring to the one before it
-	public void addTriRing() {
+	private void AddTriRing() {
 		for (int i = 0; i < _numSegments; i++) {
 			int i0 = _verts.Count - 1 - i;
 			int i1 = _verts.Count - 1 - ((i + 1) % _numSegments);
@@ -99,5 +105,18 @@ public class TubeDraw : MonoBehaviour {
 			_tris.Add(i1);
 			_tris.Add(i1 - _numSegments);
 		}
+	}
+
+	// Create closing cap for mesh
+	// Might want to do this in a more nuanced way instead of just creating another ring
+	public void CloseMesh() {
+		Vector3 ringNormal = Vector3.zero;
+		Vector3 direction = _pointsList[_pointsList.Count - 1] - _pointsList[_pointsList.Count - 2];
+		Vector3 scaledEndDelta = Vector3.Scale(direction.normalized, new Vector3(_meshTailLength, _meshTailLength, _meshTailLength));
+		Vector3 endPoint = _pointsList[_pointsList.Count - 1] + scaledEndDelta;
+
+		AddVertexRing(_pointsList.Count * _numSegments, endPoint, endPoint, ringNormal);
+		AddTriRing();
+		UpdateMesh();
 	}
 }

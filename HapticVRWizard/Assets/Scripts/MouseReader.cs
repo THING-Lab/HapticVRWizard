@@ -28,6 +28,7 @@ public class MouseReader : MonoBehaviour {
 
 		if (Input.GetMouseButtonUp(0)) {
 			_isMousePressed = false;
+			currentTool.EndStroke();
 		}
 
 		// Drawing line when mouse is moving

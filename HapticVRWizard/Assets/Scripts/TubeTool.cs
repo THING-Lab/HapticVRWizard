@@ -13,6 +13,10 @@ public class TubeTool : MonoBehaviour, ITool {
 	}
 
 	public void UpdateStroke(Vector3 point) {
-		allTubes[allTubes.Count - 1].GetComponent<TubeDraw>().addPoint(point);
+		allTubes[allTubes.Count - 1].GetComponent<TubeDraw>().AddPoint(point);
+	}
+
+	public void EndStroke() {
+		allTubes[allTubes.Count - 1].GetComponent<TubeDraw>().CloseMesh();
 	}
 }

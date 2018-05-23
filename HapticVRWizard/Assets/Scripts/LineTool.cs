@@ -15,4 +15,7 @@ public class LineTool : MonoBehaviour, ITool {
 	public void UpdateStroke(Vector3 point) {
 		allLines[allLines.Count - 1].GetComponent<LineDraw>().addPoint(point);
 	}
+
+	// Bc of the interface, maybe I should make it a class
+	public void EndStroke() {}
 }
