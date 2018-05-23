@@ -14,6 +14,8 @@ public class ToolManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		// Initial Tool Choice, Probs want to display this in the UI somehow
+		// ENUM?
 		// This could be more generic
 		currentTool = tubeManager.GetComponent<TubeTool>();
 	}
