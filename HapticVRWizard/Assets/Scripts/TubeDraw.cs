@@ -110,13 +110,15 @@ public class TubeDraw : MonoBehaviour {
 	// Create closing cap for mesh
 	// Might want to do this in a more nuanced way instead of just creating another ring
 	public void CloseMesh() {
-		Vector3 ringNormal = Vector3.zero;
-		Vector3 direction = _pointsList[_pointsList.Count - 1] - _pointsList[_pointsList.Count - 2];
-		Vector3 scaledEndDelta = Vector3.Scale(direction.normalized, new Vector3(_meshTailLength, _meshTailLength, _meshTailLength));
-		Vector3 endPoint = _pointsList[_pointsList.Count - 1] + scaledEndDelta;
+		if (_pointsList.Count > 1) {
+			Vector3 ringNormal = Vector3.zero;
+			Vector3 direction = _pointsList[_pointsList.Count - 1] - _pointsList[_pointsList.Count - 2];
+			Vector3 scaledEndDelta = Vector3.Scale(direction.normalized, new Vector3(_meshTailLength, _meshTailLength, _meshTailLength));
+			Vector3 endPoint = _pointsList[_pointsList.Count - 1] + scaledEndDelta;
 
-		AddVertexRing(_pointsList.Count * _numSegments, endPoint, endPoint, ringNormal);
-		AddTriRing();
-		UpdateMesh();
+			AddVertexRing(_pointsList.Count * _numSegments, endPoint, endPoint, ringNormal);
+			AddTriRing();
+			UpdateMesh();
+		}
 	}
 }
