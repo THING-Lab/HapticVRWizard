@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ViveStrokeReader : MonoBehaviour {
     private bool _isButtonHeld = false;
-    public float _moveThreshold = 0.02f;
+    public float _moveThreshold = 0.005f;
     // Hack to allow for a new position on first
     private Vector3 _lastPos = new Vector3(-1000, -1000, -1000);
     public GameObject _toolManager;

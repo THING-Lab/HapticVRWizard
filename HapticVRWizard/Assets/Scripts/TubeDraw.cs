@@ -6,8 +6,8 @@ public class TubeDraw : MonoBehaviour {
 	private Mesh _mesh;
 	private MeshFilter _meshFilter;
 	private List<Vector3> _pointsList = new List<Vector3>();
-	private int _numSegments = 15;
-	private float _radius = 0.05f;
+	private int _numSegments = 10;
+	private float _radius = 0.01f;
 
 	// Mesh Props?
 	private List<Vector3> _verts = new List<Vector3>();

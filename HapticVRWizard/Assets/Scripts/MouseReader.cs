@@ -6,7 +6,7 @@ public class MouseReader : MonoBehaviour {
 	private bool _isMousePressed;
 	private Vector3 _lastPos;
 	public GameObject _toolManager;
-	public float _moveThreshold = 0.02f;
+	public float _moveThreshold = 0.005f;
 
 	// Use this for initialization
 	void Start () {
