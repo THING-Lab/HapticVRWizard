@@ -8,7 +8,7 @@ public class LineDraw : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake() {
-		line = this.GetComponent<LineRenderer>();
+		line = gameObject.GetComponent<LineRenderer>();
 		line.material = new Material(Shader.Find("Particles/Additive"));
 	}
 
