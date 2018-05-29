@@ -28,5 +28,9 @@ public class ToolManager : MonoBehaviour {
 		if(Input.GetKeyDown(KeyCode.L)) {
 			currentTool = lineManager.GetComponent<LineTool>();
 		}
+
+		if(Input.GetKeyDown(KeyCode.E)) {
+			tubeManager.GetComponent<TubeTool>().ExportDrawing();
+		}
 	}
 }

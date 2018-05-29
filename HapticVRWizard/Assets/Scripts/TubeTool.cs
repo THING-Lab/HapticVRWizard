@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Temp for json test
+using System.IO;
+
 public class TubeTool : MonoBehaviour, ITool {
 	public GameObject tube;
+	public GameObject exporter;
 	public List<GameObject> allTubes = new List<GameObject>();
-	private int currentObject;
 
 	public void StartStroke() {
 		GameObject newTube = (GameObject)Instantiate(tube);
@@ -18,5 +21,9 @@ public class TubeTool : MonoBehaviour, ITool {
 
 	public void EndStroke() {
 		allTubes[allTubes.Count - 1].GetComponent<TubeDraw>().CloseMesh();
+	}
+
+	public void ExportDrawing() {
+		exporter.GetComponent<JSONExportManager>().ExportMeshes(allTubes);
 	}
 }
