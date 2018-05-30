@@ -41,7 +41,7 @@ public class ObjectData {
 	public string uuid = "E7B44C44-DD75-4C29-B571-21AD6AEF0CA9";
   public string name = "Temp Name";
   public string type = "Mesh";
-  public string geometry = "C3BF1E70-0BE7-4E6D-B184-C9F1E84A3423";
+  public string geometry = "";
 
 	public ObjectData(string geoId) {
 		geometry = geoId;
@@ -51,7 +51,7 @@ public class ObjectData {
 [System.Serializable]
 public class Geometry {
 	public GeometryMetadata metadata = new GeometryMetadata();
-	public string uuid =  "C3BF1E70-0BE7-4E6D-B184-C9F1E84A3423";
+	public string uuid =  "";
   public string type = "BufferGeometry";
 	public GeometryData data = new GeometryData();
 
@@ -80,26 +80,17 @@ public class GeometryAttrs {
 	public GeometryAttribute uvs = new GeometryAttribute();
 
 	public void SetAttributes(Transform t) {
+		uvs.itemSize = 2;
 		MeshFilter mf = t.GetComponent<MeshFilter>();
 		Mesh m = mf.sharedMesh;
 
-		Vector3 s 		= t.localScale;
-		Vector3 p 		= t.localPosition;
-		Quaternion r 	= t.localRotation;
-
-		// foreach(Vector3 vv in m.vertices) {
-		// 	Vector3 v = t.TransformPoint(vv);
-		// 	numVertices++;
-		// 	vertices.Add(v.x);
-		// 	vertices.Add(v.y);
-		// 	vertices.Add(-v.z);
-		// }
+		Vector3 s = t.localScale;
+		Vector3 p = t.localPosition;
+		Quaternion r = t.localRotation;
 
 		// These need to change shape?
 		foreach(Vector3 v in m.uv) {
-			uvs.array.Add(v.x);
-			uvs.array.Add(v.y);
-			uvs.itemSize = 2;
+			
 		}
 
 		for (int material=0; material < m.subMeshCount; material ++) {
@@ -110,9 +101,6 @@ public class GeometryAttrs {
 
 			int[] triangles = m.GetTriangles(material);
 			for (int i=0; i < triangles.Length; i += 1) {
-				// positions.array.Add(triangles[i]+1);
-				// positions.array.Add(triangles[i+1]+1);
-				// positions.array.Add(triangles[i+2]+1);
 				Vector3 v = t.TransformPoint(m.vertices[triangles[i]]);
 				position.array.Add(v.x);
 				position.array.Add(v.y);
@@ -123,6 +111,10 @@ public class GeometryAttrs {
 				normal.array.Add(-n.x);
 				normal.array.Add(-n.y);
 				normal.array.Add(n.z);
+
+				Vector2 uv = m.uv[triangles[i]];
+				uvs.array.Add(uv.x);
+				uvs.array.Add(uv.y);
 			}
 		}
 	}

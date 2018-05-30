@@ -5,7 +5,7 @@ using System.Text;
 using UnityEngine;
 
 public class JSONExportManager : MonoBehaviour {
-	public void ExportMeshes(List<GameObject> objects) {
+	public void ExportMeshes(List<GameObject> objects, string filename) {
 		// string fileName = EditorUtility.SaveFilePanel("Export .obj file", "", meshName, "obj");
 		// string fileName = Application.dataPath + "/" + gameObject.name + ".obj"; // you can also use: "/storage/sdcard1/" +gameObject.
 
@@ -21,7 +21,6 @@ public class JSONExportManager : MonoBehaviour {
 		}
 
 		string json = JsonUtility.ToJson(currentScene);
-		string filename = Application.dataPath + "/TempSaveFile.json";
  
 		WriteToFile(json, filename);
 		Debug.Log("Exported Mesh: " + filename);
@@ -34,6 +33,7 @@ public class JSONExportManager : MonoBehaviour {
 	}
 
 	public Scene ReadFromFile(string filename) {
-		return JsonUtility.FromJson<Scene>(filename);
+		string sceneText = File.ReadAllText(filename).Replace("object", "sceneObject");
+		return JsonUtility.FromJson<Scene>(sceneText);
 	}
 }

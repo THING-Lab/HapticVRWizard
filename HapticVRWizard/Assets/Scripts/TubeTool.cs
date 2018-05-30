@@ -23,7 +23,19 @@ public class TubeTool : MonoBehaviour, ITool {
 		allTubes[allTubes.Count - 1].GetComponent<TubeDraw>().CloseMesh();
 	}
 
-	public void ExportDrawing() {
-		exporter.GetComponent<JSONExportManager>().ExportMeshes(allTubes);
+	public void ExportDrawing(string filename) {
+		exporter.GetComponent<JSONExportManager>().ExportMeshes(allTubes, filename);
+	}
+
+	// I should move some of this to the TubeDraw script probably
+	public void ImportDrawing(string filename) {
+		Scene oldScene = exporter.GetComponent<JSONExportManager>().ReadFromFile(filename);
+
+		foreach(Geometry geo in oldScene.geometries) {
+			GameObject newTube = (GameObject)Instantiate(tube);
+			allTubes.Add(newTube);
+			allTubes[allTubes.Count - 1].GetComponent<TubeDraw>().LoadMesh(geo);
+		}
+		
 	}
 }

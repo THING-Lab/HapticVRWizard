@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using UnityEngine;
 
 public class ToolManager : MonoBehaviour {
@@ -29,8 +31,13 @@ public class ToolManager : MonoBehaviour {
 			currentTool = lineManager.GetComponent<LineTool>();
 		}
 
+		string filename = Application.dataPath + "/TempSaveFile.json";
 		if(Input.GetKeyDown(KeyCode.E)) {
-			tubeManager.GetComponent<TubeTool>().ExportDrawing();
+			tubeManager.GetComponent<TubeTool>().ExportDrawing(filename);
+		}
+
+		if(Input.GetKeyDown(KeyCode.R)) {
+			tubeManager.GetComponent<TubeTool>().ImportDrawing(filename);
 		}
 	}
 }
