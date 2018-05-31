@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Linq;
 using UnityEngine;
 
 public class ToolManager : MonoBehaviour {
@@ -17,9 +18,17 @@ public class ToolManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		// Initial Tool Choice, Probs want to display this in the UI somehow
-		// ENUM?
-		// This could be more generic
 		currentTool = tubeManager.GetComponent<TubeTool>();
+
+		// Gen filename here, base it off path
+		string drawingLocation = Application.dataPath + "/Drawings";
+		DirectoryInfo directory = new DirectoryInfo(drawingLocation);
+		IOrderedEnumerable<FileInfo> drawFiles = directory.GetFiles("*.json")
+			.OrderByDescending(f => f.LastWriteTime);
+
+		if (drawFiles.Count() > 0) {
+			tubeManager.GetComponent<TubeTool>().ImportDrawing(drawFiles.First().FullName);
+		}
 	}
 
 	void Update () {
@@ -31,13 +40,14 @@ public class ToolManager : MonoBehaviour {
 			currentTool = lineManager.GetComponent<LineTool>();
 		}
 
-		string filename = Application.dataPath + "/TempSaveFile.json";
 		if(Input.GetKeyDown(KeyCode.E)) {
-			tubeManager.GetComponent<TubeTool>().ExportDrawing(filename);
-		}
+			string date = System.DateTime.Now.ToString()
+				.Replace(" ", "_")
+				.Replace("/", "-")
+				.Replace(":", ".");
 
-		if(Input.GetKeyDown(KeyCode.R)) {
-			tubeManager.GetComponent<TubeTool>().ImportDrawing(filename);
+			string filename = Application.dataPath + "/Drawings/drawing_" + date + ".json";
+			tubeManager.GetComponent<TubeTool>().ExportDrawing(filename);
 		}
 	}
 }

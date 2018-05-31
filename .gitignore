@@ -290,3 +290,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+# Saved drawing files
+HapticVRWizard/Assets/Drawings/*.json
+HapticVRWizard/Assets/Drawings/*.json.meta
