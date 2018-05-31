@@ -8,7 +8,7 @@ public class ViveStrokeReader : MonoBehaviour {
     private Vector2 _prevTouch = new Vector2(0, 0);
     public float _moveThreshold = 0.005f;
     private float _radiusScale = 1.0f;
-    
+    private float _defaultScale = 0.02f;
     // Hack to allow for a new position on first
     private Vector3 _lastPos = new Vector3(-1000, -1000, -1000);
     public GameObject _cursor;
@@ -57,6 +57,10 @@ public class ViveStrokeReader : MonoBehaviour {
             // Use threshold
             if (dx > 0.0001 || dx < -0.0001) {
                 _radiusScale += dx;
+
+                // Scale the cursor
+                float s = (_radiusScale * _defaultScale) - _cursor.transform.localScale.magnitude;
+                _cursor.transform.localScale += new Vector3(s,s,s);
             }
 
             _prevTouch = axis;
