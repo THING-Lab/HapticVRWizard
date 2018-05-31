@@ -7,6 +7,7 @@ public class ViveStrokeReader : MonoBehaviour {
     public float _moveThreshold = 0.005f;
     // Hack to allow for a new position on first
     private Vector3 _lastPos = new Vector3(-1000, -1000, -1000);
+    public GameObject _cursor;
     public GameObject _toolManager;
 
     private SteamVR_TrackedObject _trackedObj;
@@ -41,7 +42,7 @@ public class ViveStrokeReader : MonoBehaviour {
             // We might need to add more sophisticated position smoothing than this
             if (Vector3.Distance(currentPos, _lastPos) >= _moveThreshold)
             {
-                currentTool.UpdateStroke(currentPos);
+                currentTool.UpdateStroke(_cursor.transform.position);
                 _lastPos = currentPos;
             }
         }

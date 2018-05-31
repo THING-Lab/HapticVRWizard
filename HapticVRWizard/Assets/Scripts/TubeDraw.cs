@@ -25,6 +25,40 @@ public class TubeDraw : MonoBehaviour {
 		_meshFilter.mesh = _mesh;
 	}
 
+	public void LoadMesh(Geometry geo) {
+		List<Vector3> verts = new List<Vector3>();
+		List<int> tris = new List<int>();
+		List<Vector2> uvs = new List<Vector2>();
+
+		// Get relevant data
+		List<float> positions = geo.data.attributes.position.array;
+		List<float> oldUvs = geo.data.attributes.uvs.array;
+
+		int numVerts = positions.Count / 3;
+		for(int i = 0; i < numVerts; i++) {
+			int offset = i * 3;
+			Vector3 vertex = new Vector3(positions[offset], positions[offset + 1], positions[offset + 2]);
+			Vector3 uv = new Vector2(oldUvs[i * 2], oldUvs[(i * 2) + 1]);
+			int vectorIndex;
+
+			if (verts.Contains(vertex)) {
+				vectorIndex = verts.IndexOf(vertex);
+			} else {
+				verts.Add(vertex);
+				uvs.Add(uv);
+				vectorIndex = verts.Count - 1; 
+			}
+
+			tris.Add(vectorIndex);
+		}
+
+		_mesh.vertices = verts.ToArray();
+		_mesh.triangles = tris.ToArray();
+		_mesh.SetUVs(0, uvs);
+		_mesh.RecalculateBounds();
+		_mesh.RecalculateNormals();
+	}
+
 	private void UpdateMesh() {
 		_mesh.vertices = _verts.ToArray();
 		_mesh.triangles = _tris.ToArray();
