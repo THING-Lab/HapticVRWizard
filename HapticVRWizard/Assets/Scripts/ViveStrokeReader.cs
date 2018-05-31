@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class ViveStrokeReader : MonoBehaviour {
     private bool _isButtonHeld = false;
+    private bool _isTouchHeld = false;
+    private Vector2 _prevTouch = new Vector2(0, 0);
     public float _moveThreshold = 0.005f;
+    private float _radiusScale = 1.0f;
+    
     // Hack to allow for a new position on first
     private Vector3 _lastPos = new Vector3(-1000, -1000, -1000);
     public GameObject _cursor;
@@ -23,28 +27,43 @@ public class ViveStrokeReader : MonoBehaviour {
     void Update () {
         ITool currentTool = _toolManager.GetComponent<ToolManager>().CurrentTool;
 
-        if (Controller.GetHairTriggerDown())
-        {
+        if (Controller.GetHairTriggerDown()) {
             _isButtonHeld = true;
             currentTool.StartStroke();
         }
 
-        if (Controller.GetHairTriggerUp())
-        {
+        if (Controller.GetHairTriggerUp()) {
             _isButtonHeld = false;
             currentTool.EndStroke();
         }
 
-        if (_isButtonHeld)
-        {
+        if (_isButtonHeld) {
             Vector3 currentPos = _trackedObj.transform.position;
 
             // We might need to add more sophisticated position smoothing than this
             if (Vector3.Distance(currentPos, _lastPos) >= _moveThreshold)
             {
-                currentTool.UpdateStroke(_cursor.transform.position);
+                currentTool.UpdateStroke(_cursor.transform.position, _radiusScale);
                 _lastPos = currentPos;
             }
         }
+
+        // Radius Change
+        bool currentTouch = Controller.GetTouch(SteamVR_Controller.ButtonMask.Touchpad);
+        if (currentTouch && _isTouchHeld) {
+            Vector2 axis = Controller.GetAxis();
+            float dx = axis.x - _prevTouch.x;
+            
+            // Use threshold
+            if (dx > 0.0001 || dx < -0.0001) {
+                _radiusScale += dx;
+            }
+
+            _prevTouch = axis;
+        } else if (currentTouch) {
+            _prevTouch = Controller.GetAxis();
+        }
+
+        _isTouchHeld = currentTouch; 
     }
 }
