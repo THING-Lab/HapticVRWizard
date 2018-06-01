@@ -41,7 +41,7 @@ public class MouseReader : MonoBehaviour {
 
 			// We might need to add more sophisticated position smoothing than this
 			if(Vector3.Distance(mousePos, _lastPos) >= _moveThreshold) {
-				currentTool.UpdateStroke(mousePos);
+				currentTool.UpdateStroke(mousePos, 1f);
 				_lastPos = mousePos;
 			}
 		}

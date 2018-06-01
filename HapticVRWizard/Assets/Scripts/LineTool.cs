@@ -12,7 +12,7 @@ public class LineTool : MonoBehaviour, ITool {
 		allLines.Add(newLine);
 	}
 
-	public void UpdateStroke(Vector3 point) {
+	public void UpdateStroke(Vector3 point, float scale) {
 		allLines[allLines.Count - 1].GetComponent<LineDraw>().addPoint(point);
 	}
 

@@ -15,8 +15,8 @@ public class TubeTool : MonoBehaviour, ITool {
 		allTubes.Add(newTube);
 	}
 
-	public void UpdateStroke(Vector3 point) {
-		allTubes[allTubes.Count - 1].GetComponent<TubeDraw>().AddPoint(point);
+	public void UpdateStroke(Vector3 point, float scale) {
+		allTubes[allTubes.Count - 1].GetComponent<TubeDraw>().AddPoint(point, scale);
 	}
 
 	public void EndStroke() {

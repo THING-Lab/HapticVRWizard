@@ -16,7 +16,7 @@ public class TubeDraw : MonoBehaviour {
 	private Vector3 _prevNormal;
 
 	// Should match min move distance
-	public float _meshTailLength = 0.05f;
+	public float _meshTailLength = 0.03f;
 
 	// Use this for initialization
 	void Awake() {
@@ -68,7 +68,7 @@ public class TubeDraw : MonoBehaviour {
 		_mesh.RecalculateNormals();
 	}
 
-	public void AddPoint(Vector3 point) {
+	public void AddPoint(Vector3 point, float scale) {
 		_pointsList.Add(point);
 	
 		// Basically Generates the whole mesh
@@ -110,7 +110,7 @@ public class TubeDraw : MonoBehaviour {
 			}
 
 			// Create vertex ring and Add tris
-			AddVertexRing(pointIndex * _numSegments, point, direction, ringNormal, 1);
+			AddVertexRing(pointIndex * _numSegments, point, direction, ringNormal, scale);
 			AddTriRing();
 
 			// Add mesh end cap
@@ -128,7 +128,7 @@ public class TubeDraw : MonoBehaviour {
 		for (int i = 0; i < _numSegments; i++) {
 			float angle = 360.0f * (i / (float)(_numSegments));
 			Quaternion rotator = Quaternion.AngleAxis(angle, direction.normalized);
-			Vector3 ringSpoke = rotator * normal.normalized * _radius * radiusScale;
+			Vector3 ringSpoke = rotator * normal.normalized * radiusScale * 0.5f; // * _radius
 
 			_verts.Add(ringPosition + ringSpoke);
 			_uvs.Add(new Vector2(i / (_numSegments - 1.0f), 0));
