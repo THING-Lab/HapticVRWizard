@@ -128,7 +128,7 @@ public class TubeDraw : MonoBehaviour {
 		for (int i = 0; i < _numSegments; i++) {
 			float angle = 360.0f * (i / (float)(_numSegments));
 			Quaternion rotator = Quaternion.AngleAxis(angle, direction.normalized);
-			Vector3 ringSpoke = rotator * normal.normalized * _radius * radiusScale;
+			Vector3 ringSpoke = rotator * normal.normalized * radiusScale * 0.5f; // * _radius
 
 			_verts.Add(ringPosition + ringSpoke);
 			_uvs.Add(new Vector2(i / (_numSegments - 1.0f), 0));

@@ -9,6 +9,7 @@ public class ViveStrokeReader : MonoBehaviour {
     public float _moveThreshold = 0.005f;
     private float _radiusScale = 1.0f;
     private float _defaultScale = 0.02f;
+    private float _currentRadius = 0.02f;
     // Hack to allow for a new position on first
     private Vector3 _lastPos = new Vector3(-1000, -1000, -1000);
     public GameObject _cursor;
@@ -43,7 +44,7 @@ public class ViveStrokeReader : MonoBehaviour {
             // We might need to add more sophisticated position smoothing than this
             if (Vector3.Distance(currentPos, _lastPos) >= _moveThreshold)
             {
-                currentTool.UpdateStroke(_cursor.transform.position, _radiusScale);
+                currentTool.UpdateStroke(_cursor.transform.position, _currentRadius);
                 _lastPos = currentPos;
             }
         }
@@ -56,11 +57,17 @@ public class ViveStrokeReader : MonoBehaviour {
             
             // Use threshold
             if (dx > 0.0001 || dx < -0.0001) {
-                _radiusScale += dx;
+                float newScale = _radiusScale + dx;
 
-                // Scale the cursor
-                float s = (_radiusScale * _defaultScale) - _cursor.transform.localScale.magnitude;
-                _cursor.transform.localScale += new Vector3(s,s,s);
+                // Clamp scale so it doesn't break
+                if (newScale < 6.5f && newScale > 0.15f) {
+                    _radiusScale = newScale;
+                    _currentRadius = _radiusScale * _defaultScale;
+
+                    // Scale the cursor
+                    float s = (_currentRadius) - _cursor.transform.localScale.x;
+                    _cursor.transform.localScale += new Vector3(s,s,s);
+                }
             }
 
             _prevTouch = axis;
