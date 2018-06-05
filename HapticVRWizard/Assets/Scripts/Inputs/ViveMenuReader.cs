@@ -22,10 +22,8 @@ public class ViveMenuReader : MonoBehaviour {
 			Vector2 axis = Controller.GetAxis();
 
 			if (axis.x > 0.05f) {
-				Debug.Log("Redo!");
 				_toolManager.Redo();
 			} else if (axis.x < -0.05f) {
-				Debug.Log("Undo!");
 				_toolManager.Undo();
 			}
 		}

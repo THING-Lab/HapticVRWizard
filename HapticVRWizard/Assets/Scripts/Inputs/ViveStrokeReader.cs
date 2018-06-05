@@ -7,13 +7,15 @@ public class ViveStrokeReader : MonoBehaviour {
     private bool _isTouchHeld = false;
     private Vector2 _prevTouch = new Vector2(0, 0);
     public float _moveThreshold = 0.005f;
+
     private float _radiusScale = 1.0f;
     private float _defaultScale = 0.02f;
     private float _currentRadius = 0.02f;
+
     // Hack to allow for a new position on first
     private Vector3 _lastPos = new Vector3(-1000, -1000, -1000);
     public GameObject _cursor;
-    public GameObject _toolManager;
+    public ToolManager _toolManager;
 
     private SteamVR_TrackedObject _trackedObj;
     private SteamVR_Controller.Device Controller {
@@ -28,12 +30,12 @@ public class ViveStrokeReader : MonoBehaviour {
     void Update () {
         if (Controller.GetHairTriggerDown()) {
             _isButtonHeld = true;
-            _toolManager.GetComponent<ToolManager>().StartStroke();
+            _toolManager.StartStroke();
         }
 
         if (Controller.GetHairTriggerUp()) {
             _isButtonHeld = false;
-            _toolManager.GetComponent<ToolManager>().EndStroke();
+            _toolManager.EndStroke();
         }
 
         if (_isButtonHeld) {
@@ -42,7 +44,7 @@ public class ViveStrokeReader : MonoBehaviour {
             // We might need to add more sophisticated position smoothing than this
             if (Vector3.Distance(currentPos, _lastPos) >= _moveThreshold)
             {
-                _toolManager.GetComponent<ToolManager>().UpdateStroke(_cursor.transform.position, _currentRadius);
+                _toolManager.UpdateStroke(_cursor.transform.position, _currentRadius);
                 _lastPos = currentPos;
             }
         }
