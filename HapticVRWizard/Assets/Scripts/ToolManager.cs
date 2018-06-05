@@ -11,8 +11,8 @@ public class ToolManager : MonoBehaviour {
 	public GameObject _tubeManager;
 
 	// Undo Redo Code
-	private Stack<ICommand> _undoStack;
-	private Stack<ICommand> _redoStack;
+	private Stack<ICommand> _undoStack = new Stack<ICommand>();
+	private Stack<ICommand> _redoStack = new Stack<ICommand>();
 	// .Clear(); .Pop(); .Empty();?
 
 	private ITool _currentTool;
@@ -38,12 +38,29 @@ public class ToolManager : MonoBehaviour {
 	}
 
 	public void EndStroke() {
-		ICommand com = _currentTool.EndStroke();
-		_undoStack.Push(com);
+		ICommand command = (ICommand)_currentTool.EndStroke();
+		_undoStack.Push(command);
+		_redoStack.Clear();
 	}
 
 	public void UpdateStroke(Vector3 pos, float r) {
 		_currentTool.UpdateStroke(pos, r);
+	}
+
+	public void Undo() {
+		if (_undoStack.Count > 0) {
+			ICommand command = _undoStack.Pop();
+			command.Undo();
+			_redoStack.Push(command);
+		}
+	}
+
+	public void Redo() {
+		if (_redoStack.Count > 0) {
+			ICommand command = _redoStack.Pop();
+			command.Redo();
+			_undoStack.Push(command);
+		}
 	}
 
 	void Update () {

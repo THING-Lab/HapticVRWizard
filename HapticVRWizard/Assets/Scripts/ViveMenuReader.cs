@@ -9,6 +9,8 @@ public class ViveMenuReader : MonoBehaviour {
         get { return SteamVR_Controller.Input((int)_trackedObj.index); }
     }
 
+	public ToolManager _toolManager;
+
 	// Use this for initialization
 	void Awake () {
 		_trackedObj = GetComponent<SteamVR_TrackedObject>();
@@ -19,10 +21,12 @@ public class ViveMenuReader : MonoBehaviour {
 		if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad)) {
 			Vector2 axis = Controller.GetAxis();
 
-			if (axis.x > 0.2f) {
+			if (axis.x > 0.05f) {
 				Debug.Log("Redo!");
-			} else if (axis.x < -0.2f) {
+				_toolManager.Redo();
+			} else if (axis.x < -0.05f) {
 				Debug.Log("Undo!");
+				_toolManager.Undo();
 			}
 		}
 	}

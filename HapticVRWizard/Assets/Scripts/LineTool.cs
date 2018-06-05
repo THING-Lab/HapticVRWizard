@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class LineCommand : ICommand {
-	void Undo() {};
-	void Redo() {};
+	public void Undo() {}
+	public void Redo() {}
 }
 
 public class LineTool : MonoBehaviour, ITool {

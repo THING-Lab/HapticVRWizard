@@ -19,11 +19,38 @@ public class TubeDraw : MonoBehaviour {
 	private List<Vector2> _uvs = new List<Vector2>();
 	private Vector3 _prevNormal;
 
-	public string Id { get { return _id; } }
+	public string Id {
+		get { return _id; }
+		set { _id = value; }
+	}
 	// Clone the lists?
-	public List<Vector3> Vertices { get { return new List<Vector3>(_verts); } }
-	public List<int> Tris { get { return new List<int>(_tris); } }
-	public List<Vector2> Uvs { get { return new List<Vector2>(_uvs); } }
+	public List<Vector3> Vertices {
+		get {
+			List<Vector3> vs = new List<Vector3>();
+			foreach(Vector3 v in _verts) {
+				vs.Add(new Vector3(v.x, v.y, v.z));
+			}
+			return vs;
+		}
+	}
+	public List<int> Tris {
+		get {
+			List<int> ts = new List<int>();
+			foreach(int t in _tris) {
+				ts.Add(t);
+			}
+			return ts;
+		}
+	}
+	public List<Vector2> Uvs {
+		get {
+			List<Vector2> us = new List<Vector2>();
+			foreach(Vector2 u in _uvs) {
+				us.Add(new Vector2(u.x, u.y));
+			}
+			return us;
+		}
+	}
 
 	// Use this for initialization
 	void Awake() {
@@ -37,8 +64,8 @@ public class TubeDraw : MonoBehaviour {
 		_verts = new List<Vector3>();
 		_tris = new List<int>();
 		_uvs = new List<Vector2>();
-
-		UpdateMesh();
+		_mesh.Clear();
+		// UpdateMesh();
 	}
 
 	public void LoadMesh(Geometry geo) {
@@ -67,6 +94,7 @@ public class TubeDraw : MonoBehaviour {
 
 			tris.Add(vectorIndex);
 		}
+
 		GenerateFrom(verts, tris, uvs);
 		// _mesh.vertices = verts.ToArray();
 		// _mesh.triangles = tris.ToArray();
