@@ -26,16 +26,14 @@ public class ViveStrokeReader : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        ITool currentTool = _toolManager.GetComponent<ToolManager>().CurrentTool;
-
         if (Controller.GetHairTriggerDown()) {
             _isButtonHeld = true;
-            currentTool.StartStroke();
+            _toolManager.StartStroke();
         }
 
         if (Controller.GetHairTriggerUp()) {
             _isButtonHeld = false;
-            currentTool.EndStroke();
+            _toolManager.EndStroke();
         }
 
         if (_isButtonHeld) {
@@ -44,7 +42,7 @@ public class ViveStrokeReader : MonoBehaviour {
             // We might need to add more sophisticated position smoothing than this
             if (Vector3.Distance(currentPos, _lastPos) >= _moveThreshold)
             {
-                currentTool.UpdateStroke(_cursor.transform.position, _currentRadius);
+                _toolManager.UpdateStroke(_cursor.transform.position, _currentRadius);
                 _lastPos = currentPos;
             }
         }

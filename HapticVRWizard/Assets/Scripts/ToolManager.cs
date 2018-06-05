@@ -7,18 +7,20 @@ using UnityEngine;
 
 public class ToolManager : MonoBehaviour {
 
-	public GameObject lineManager;
-	public GameObject tubeManager;
+	public GameObject _lineManager;
+	public GameObject _tubeManager;
 
-	private ITool currentTool;
-	public ITool CurrentTool {
-		get { return currentTool; }
-	}
+	// Undo Redo Code
+	private Stack<ICommand> _undoStack;
+	private Stack<ICommand> _redoStack;
+	// .Clear(); .Pop(); .Empty();?
+
+	private ITool _currentTool;
 
 	// Use this for initialization
 	void Start () {
 		// Initial Tool Choice, Probs want to display this in the UI somehow
-		currentTool = tubeManager.GetComponent<TubeTool>();
+		_currentTool = _tubeManager.GetComponent<TubeTool>();
 
 		// Gen filename here, base it off path
 		string drawingLocation = Application.dataPath + "/Drawings";
@@ -27,17 +29,30 @@ public class ToolManager : MonoBehaviour {
 			.OrderByDescending(f => f.LastWriteTime);
 
 		if (drawFiles.Count() > 0) {
-			tubeManager.GetComponent<TubeTool>().ImportDrawing(drawFiles.First().FullName);
+			_tubeManager.GetComponent<TubeTool>().ImportDrawing(drawFiles.First().FullName);
 		}
+	}
+
+	public void StartStroke() {
+		_currentTool.StartStroke();
+	}
+
+	public void EndStroke() {
+		ICommand com = _currentTool.EndStroke();
+		_undoStack.Push(com);
+	}
+
+	public void UpdateStroke(Vector3 pos, float r) {
+		_currentTool.UpdateStroke(pos, r);
 	}
 
 	void Update () {
 		if(Input.GetKeyDown(KeyCode.T)) {
-			currentTool = tubeManager.GetComponent<TubeTool>();
+			_currentTool = _tubeManager.GetComponent<TubeTool>();
 		}
 
 		if(Input.GetKeyDown(KeyCode.L)) {
-			currentTool = lineManager.GetComponent<LineTool>();
+			_currentTool = _lineManager.GetComponent<LineTool>();
 		}
 
 		if(Input.GetKeyDown(KeyCode.E)) {
@@ -47,7 +62,7 @@ public class ToolManager : MonoBehaviour {
 				.Replace(":", ".");
 
 			string filename = Application.dataPath + "/Drawings/drawing_" + date + ".json";
-			tubeManager.GetComponent<TubeTool>().ExportDrawing(filename);
+			_tubeManager.GetComponent<TubeTool>().ExportDrawing(filename);
 		}
 	}
 }

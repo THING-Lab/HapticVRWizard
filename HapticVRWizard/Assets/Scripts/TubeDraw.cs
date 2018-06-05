@@ -8,6 +8,10 @@ public class TubeDraw : MonoBehaviour {
 	private List<Vector3> _pointsList = new List<Vector3>();
 	private int _numSegments = 10;
 	private float _radius = 0.01f;
+	private string _id;
+
+	// Should match min move distance
+	public float _meshTailLength = 0.03f;
 
 	// Mesh Props?
 	private List<Vector3> _verts = new List<Vector3>();
@@ -15,14 +19,26 @@ public class TubeDraw : MonoBehaviour {
 	private List<Vector2> _uvs = new List<Vector2>();
 	private Vector3 _prevNormal;
 
-	// Should match min move distance
-	public float _meshTailLength = 0.03f;
+	public string Id { get { return _id; } }
+	// Clone the lists?
+	public List<Vector3> Vertices { get { return new List<Vector3>(_verts); } }
+	public List<int> Tris { get { return new List<int>(_tris); } }
+	public List<Vector2> Uvs { get { return new List<Vector2>(_uvs); } }
 
 	// Use this for initialization
 	void Awake() {
 		_meshFilter = gameObject.GetComponent<MeshFilter>();
 		_mesh = new Mesh();
 		_meshFilter.mesh = _mesh;
+	}
+
+	public void Reset() {
+		_pointsList = new List<Vector3>();
+		_verts = new List<Vector3>();
+		_tris = new List<int>();
+		_uvs = new List<Vector2>();
+
+		UpdateMesh();
 	}
 
 	public void LoadMesh(Geometry geo) {
@@ -51,12 +67,20 @@ public class TubeDraw : MonoBehaviour {
 
 			tris.Add(vectorIndex);
 		}
+		GenerateFrom(verts, tris, uvs);
+		// _mesh.vertices = verts.ToArray();
+		// _mesh.triangles = tris.ToArray();
+		// _mesh.SetUVs(0, uvs);
+		// _mesh.RecalculateBounds();
+		// _mesh.RecalculateNormals();
+	}
 
-		_mesh.vertices = verts.ToArray();
-		_mesh.triangles = tris.ToArray();
-		_mesh.SetUVs(0, uvs);
-		_mesh.RecalculateBounds();
-		_mesh.RecalculateNormals();
+	public void GenerateFrom(List<Vector3> verts, List<int> tris, List<Vector2> uvs) {
+		_verts = verts;
+		_tris = tris;
+		_uvs = uvs;
+
+		UpdateMesh();
 	}
 
 	private void UpdateMesh() {

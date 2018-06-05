@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public class LineCommand : ICommand {
+	void Undo() {};
+	void Redo() {};
+}
+
 public class LineTool : MonoBehaviour, ITool {
 	public GameObject line;
 	public List<GameObject> allLines = new List<GameObject>();
@@ -16,6 +21,8 @@ public class LineTool : MonoBehaviour, ITool {
 		allLines[allLines.Count - 1].GetComponent<LineDraw>().addPoint(point);
 	}
 
-	// Bc of the interface, maybe I should make it a class
-	public void EndStroke() {}
+	// This needs to change
+	public ICommand EndStroke() {
+		return new LineCommand();
+	}
 }
