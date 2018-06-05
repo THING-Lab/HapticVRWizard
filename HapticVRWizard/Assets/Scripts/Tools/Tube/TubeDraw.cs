@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TubeDraw : MonoBehaviour {
@@ -8,6 +9,10 @@ public class TubeDraw : MonoBehaviour {
 	private List<Vector3> _pointsList = new List<Vector3>();
 	private int _numSegments = 10;
 	private float _radius = 0.01f;
+	private string _id;
+
+	// Should match min move distance
+	public float _meshTailLength = 0.03f;
 
 	// Mesh Props?
 	private List<Vector3> _verts = new List<Vector3>();
@@ -15,14 +20,71 @@ public class TubeDraw : MonoBehaviour {
 	private List<Vector2> _uvs = new List<Vector2>();
 	private Vector3 _prevNormal;
 
-	// Should match min move distance
-	public float _meshTailLength = 0.03f;
+	public string Id {
+		get { return _id; }
+		set { _id = value; }
+	}
 
-	// Use this for initialization
+	// Clone the lists for Commands
+	public List<Vector3> Vertices {
+		get {
+			List<Vector3> vs = new List<Vector3>();
+			foreach(Vector3 v in _verts) {
+				vs.Add(new Vector3(v.x, v.y, v.z));
+			}
+			return vs;
+		}
+	}
+
+	public List<int> Tris {
+		get {
+			List<int> ts = new List<int>();
+			foreach(int t in _tris) {
+				ts.Add(t);
+			}
+			return ts;
+		}
+	}
+
+	public List<Vector2> Uvs {
+		get {
+			List<Vector2> us = new List<Vector2>();
+			foreach(Vector2 u in _uvs) {
+				us.Add(new Vector2(u.x, u.y));
+			}
+			return us;
+		}
+	}
+
 	void Awake() {
 		_meshFilter = gameObject.GetComponent<MeshFilter>();
 		_mesh = new Mesh();
 		_meshFilter.mesh = _mesh;
+	}
+
+	public void Reset() {
+		_pointsList = new List<Vector3>();
+		_verts = new List<Vector3>();
+		_tris = new List<int>();
+		_uvs = new List<Vector2>();
+		_mesh.Clear();
+	}
+
+	// Connects the most recently added vertex ring to the one before it
+	public static List<int> CreateTriRing(int segments, int vertCount) {
+		List<int> ring = new List<int>();
+
+		for (int i = 0; i < segments; i++) {
+			int i0 = vertCount - 1 - i;
+			int i1 = vertCount - 1 - ((i + 1) % segments);
+
+			int[] seg = {
+				i0, i1 - segments, i0 - segments,
+				i0, i1, i1 - segments
+			};
+			ring.AddRange(seg);
+		}
+		return ring;
 	}
 
 	public void LoadMesh(Geometry geo) {
@@ -52,26 +114,27 @@ public class TubeDraw : MonoBehaviour {
 			tris.Add(vectorIndex);
 		}
 
-		_mesh.vertices = verts.ToArray();
-		_mesh.triangles = tris.ToArray();
-		_mesh.SetUVs(0, uvs);
-		_mesh.RecalculateBounds();
-		_mesh.RecalculateNormals();
+		GenerateFrom(verts, tris, uvs);
+	}
+
+	public void GenerateFrom(List<Vector3> verts, List<int> tris, List<Vector2> uvs) {
+		_verts = verts;
+		_tris = tris;
+		_uvs = uvs;
+
+		UpdateMesh();
 	}
 
 	private void UpdateMesh() {
 		_mesh.vertices = _verts.ToArray();
 		_mesh.triangles = _tris.ToArray();
 		_mesh.SetUVs(0, _uvs);
-		// _mesh.SetColors(_colors);
 		_mesh.RecalculateBounds();
 		_mesh.RecalculateNormals();
 	}
 
 	public void AddPoint(Vector3 point, float scale) {
 		_pointsList.Add(point);
-	
-		// Basically Generates the whole mesh
 		// Defaults for normal and direction
 		Vector3 ringNormal = Vector3.zero;
 		Vector3 direction = point;
@@ -111,7 +174,7 @@ public class TubeDraw : MonoBehaviour {
 
 			// Create vertex ring and Add tris
 			AddVertexRing(pointIndex * _numSegments, point, direction, ringNormal, scale);
-			AddTriRing();
+			_tris.AddRange(CreateTriRing(_numSegments, _verts.Count));
 
 			// Add mesh end cap
 			if (_pointsList.Count > 2) {
@@ -137,34 +200,17 @@ public class TubeDraw : MonoBehaviour {
 		}
 	}
 
-	// Connects the most recently added vertex ring to the one before it
-	// 6 * _numSegments tris
-	private void AddTriRing() {
-		for (int i = 0; i < _numSegments; i++) {
-			int i0 = _verts.Count - 1 - i;
-			int i1 = _verts.Count - 1 - ((i + 1) % _numSegments);
-
-			_tris.Add(i0);
-			_tris.Add(i1 - _numSegments);
-			_tris.Add(i0 - _numSegments);
-
-			_tris.Add(i0);
-			_tris.Add(i1);
-			_tris.Add(i1 - _numSegments);
-		}
-	}
-
 	// Create closing cap for mesh
 	// Might want to do this in a more nuanced way instead of just creating another ring
 	public void CloseMesh() {
 		if (_pointsList.Count > 1) {
 			Vector3 ringNormal = Vector3.zero;
-			Vector3 direction = _pointsList[_pointsList.Count - 1] - _pointsList[_pointsList.Count - 2];
+			Vector3 direction = _pointsList.Last() - _pointsList[_pointsList.Count - 2];
 			Vector3 scaledEndDelta = Vector3.Scale(direction.normalized, new Vector3(_meshTailLength, _meshTailLength, _meshTailLength));
-			Vector3 endPoint = _pointsList[_pointsList.Count - 1] + scaledEndDelta;
+			Vector3 endPoint = _pointsList.Last() + scaledEndDelta;
 
 			AddVertexRing(_pointsList.Count * _numSegments, endPoint, endPoint, ringNormal, 0);
-			AddTriRing();
+			_tris.AddRange(CreateTriRing(_numSegments, _verts.Count));
 			UpdateMesh();
 		}
 	}
