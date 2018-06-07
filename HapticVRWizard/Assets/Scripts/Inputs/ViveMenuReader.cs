@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ViveMenuReader : MonoBehaviour {
-	private bool _isPadHeld = false;
 	private bool _isTouchHeld = false;
 	private float _menuRotation = 0f;
 	private Vector2 _prevTouch = new Vector2(0, 0);

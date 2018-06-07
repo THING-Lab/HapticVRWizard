@@ -8,7 +8,6 @@ public class TubeDraw : MonoBehaviour {
 	private MeshFilter _meshFilter;
 	private List<Vector3> _pointsList = new List<Vector3>();
 	private int _numSegments = 10;
-	private float _radius = 0.01f;
 	private string _id;
 
 	// Should match min move distance

@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ViveUIPointer : MonoBehaviour {
 	public float _thickness = 0.002f;
 	public float _cursorScale = 0.02f;
 	public Color _color;
-	private int _menuLayerMask = ~(1 << 5);
+	private int _menuLayerMask = (1 << 5);
 
 	private GameObject _hitPoint;
 	private GameObject _pointer;
@@ -50,7 +51,7 @@ public class ViveUIPointer : MonoBehaviour {
 		Ray ray = new Ray(transform.position, transform.TransformDirection(Vector3.forward));
 		RaycastHit hitInfo;
 		// Make this not infinity
-		bool hasHit = Physics.Raycast(ray, out hitInfo, Mathf.Infinity);
+		bool hasHit = Physics.Raycast(ray, out hitInfo, Mathf.Infinity, _menuLayerMask);
 		// Physics.Raycast(transform.position, transform.forward, out hitInfo, Mathf.Infinity, _menuLayerMask)
 
 		if (hasHit) {
@@ -63,12 +64,20 @@ public class ViveUIPointer : MonoBehaviour {
 			_hitPoint.transform.localPosition = new Vector3(0.0f, 0.0f, hitInfo.distance);
 
 			// Let the stroke reader know that the menu is in control
-			GetComponent<ViveStrokeReader>().IsPointerMode = true;
+			GetComponent<ViveStrokeReader>().SetPointerMode(true);
+
+			// Find first hit button
+			if (hitInfo.collider.tag == "MenuButton") {
+				// Only start drawing if not pointing at menu
+				if (Controller.GetHairTriggerDown()) {
+					hitInfo.collider.gameObject.GetComponent<ViveMenuButton>().Execute();
+				}
+			}
 		} else {
 			_pointer.SetActive(false);
 			_hitPoint.SetActive(false);
 
-			GetComponent<ViveStrokeReader>().IsPointerMode = false;
+			GetComponent<ViveStrokeReader>().SetPointerMode(false);
 		}
 		
 	}

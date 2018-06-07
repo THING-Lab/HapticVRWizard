@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ViveStrokeReader : MonoBehaviour {
     private bool _isTriggerHeld = false;
@@ -25,7 +26,11 @@ public class ViveStrokeReader : MonoBehaviour {
     private bool _isPointerMode = false;
     public bool IsPointerMode {
         get { return _isPointerMode; }
-        set { _isPointerMode = value; }
+    }
+
+    public void SetPointerMode(bool setting) {
+        _isPointerMode = setting;
+        _cursor.SetActive(!setting);
     }
 
     void Awake () {
@@ -40,7 +45,7 @@ public class ViveStrokeReader : MonoBehaviour {
             _toolManager.StartStroke();
         }
 
-        if (Controller.GetHairTriggerUp()) {
+        if (Controller.GetHairTriggerUp() && _isTriggerHeld) {
             _isTriggerHeld = false;
             _toolManager.EndStroke();
         }
