@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ViveStrokeReader : MonoBehaviour {
-    private bool _isButtonHeld = false;
+    private bool _isTriggerHeld = false;
     private bool _isTouchHeld = false;
     private Vector2 _prevTouch = new Vector2(0, 0);
     public float _moveThreshold = 0.005f;
@@ -22,23 +23,34 @@ public class ViveStrokeReader : MonoBehaviour {
         get { return SteamVR_Controller.Input((int)_trackedObj.index); }
     }
 
+    private bool _isPointerMode = false;
+    public bool IsPointerMode {
+        get { return _isPointerMode; }
+    }
+
+    public void SetPointerMode(bool setting) {
+        _isPointerMode = setting;
+        _cursor.SetActive(!setting);
+    }
+
     void Awake () {
         _trackedObj = GetComponent<SteamVR_TrackedObject>();
     }
 
     // Update is called once per frame
     void Update () {
-        if (Controller.GetHairTriggerDown()) {
-            _isButtonHeld = true;
+        // Only start drawing if not pointing at menu
+        if (Controller.GetHairTriggerDown() && !_isPointerMode) {
+            _isTriggerHeld = true;
             _toolManager.StartStroke();
         }
 
-        if (Controller.GetHairTriggerUp()) {
-            _isButtonHeld = false;
+        if (Controller.GetHairTriggerUp() && _isTriggerHeld) {
+            _isTriggerHeld = false;
             _toolManager.EndStroke();
         }
 
-        if (_isButtonHeld) {
+        if (_isTriggerHeld) {
             Vector3 currentPos = _trackedObj.transform.position;
 
             // We might need to add more sophisticated position smoothing than this

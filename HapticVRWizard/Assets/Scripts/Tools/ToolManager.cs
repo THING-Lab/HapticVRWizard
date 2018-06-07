@@ -69,6 +69,7 @@ public class ToolManager : MonoBehaviour {
 	}
 
 	public void Undo() {
+		Debug.Log(_undoStack.Count);
 		// Only run if there are commands to Undo
 		if (_undoStack.Count > 0) {
 			ICommand command = _undoStack.Pop();
