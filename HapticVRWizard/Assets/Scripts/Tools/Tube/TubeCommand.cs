@@ -8,15 +8,17 @@ public class TubeCommand : ICommand {
 	private List<Vector2> _uvs;
 	private List<int> _tris;
 	private TubeTool _tool;
+	private Transform _parent;
 
 	public string Id { get { return _id; } }
 
-	public TubeCommand(string id, TubeTool tool, List<Vector3> verts, List<int> tris, List<Vector2> uvs) {
+	public TubeCommand(string id, TubeTool tool, List<Vector3> verts, List<int> tris, List<Vector2> uvs, Transform parent) {
 		_id = id;
 		_tool = tool;
 		_verts = verts;
 		_tris = tris;
 		_uvs = uvs;
+		_parent = parent;
 	}
 
 	public void Undo() {
@@ -24,6 +26,6 @@ public class TubeCommand : ICommand {
 	}
 
 	public void Execute() {
-		_tool.AddTube(_id, _verts, _tris, _uvs);
+		_tool.AddTube(_id, _verts, _tris, _uvs, _parent);
 	}
 }

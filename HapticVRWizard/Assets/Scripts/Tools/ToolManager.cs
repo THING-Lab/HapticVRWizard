@@ -9,6 +9,7 @@ public class ToolManager : MonoBehaviour {
 
 	public LineTool _lineTool;
 	public TubeTool _tubeTool;
+	public GameObject _tracker;
 
 	// Undo Redo Datastructures
 	private Stack<ICommand> _undoStack = new Stack<ICommand>();
@@ -54,12 +55,12 @@ public class ToolManager : MonoBehaviour {
 	}
 
 	public void StartStroke() {
-		_currentTool.StartStroke();
+		_currentTool.StartStroke(_tracker.transform);
 	}
 
 	public void EndStroke() {
 		// Save command once the stroke has been completed for undo/redo
-		ICommand command = (ICommand)_currentTool.EndStroke();
+		ICommand command = (ICommand)_currentTool.EndStroke(_tracker.transform);
 		_undoStack.Push(command);
 		_redoStack.Clear();
 	}
