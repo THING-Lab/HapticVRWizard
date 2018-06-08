@@ -21,17 +21,6 @@ public class ToolManager : MonoBehaviour {
 	void Start () {
 		// Initial Tool Choice, Probs want to display this in the UI somehow
 		_currentTool = _tubeTool;
-
-		// Load previously saved file on startup
-		// Possibly move this to a menu option
-		string drawingLocation = Application.dataPath + "/Drawings";
-		DirectoryInfo directory = new DirectoryInfo(drawingLocation);
-		IOrderedEnumerable<FileInfo> drawFiles = directory.GetFiles("*.json")
-			.OrderByDescending(f => f.LastWriteTime);
-
-		if (drawFiles.Count() > 0) {
-			_tubeTool.ImportDrawing(drawFiles.First().FullName);
-		}
 	}
 
 	void Update () {
@@ -44,13 +33,29 @@ public class ToolManager : MonoBehaviour {
 		}
 
 		if(Input.GetKeyDown(KeyCode.E)) {
-			string date = System.DateTime.Now.ToString()
-				.Replace(" ", "_")
-				.Replace("/", "-")
-				.Replace(":", ".");
+			SaveDrawing();
+		}
+	}
 
-			string filename = Application.dataPath + "/Drawings/drawing_" + date + ".json";
-			_tubeTool.ExportDrawing(filename);
+	public void SaveDrawing() {
+		string date = System.DateTime.Now.ToString()
+			.Replace(" ", "_")
+			.Replace("/", "-")
+			.Replace(":", ".");
+
+		string filename = Application.dataPath + "/Drawings/drawing_" + date + ".json";
+		_tubeTool.ExportDrawing(filename);
+	}
+
+	public void LoadDrawing() {
+		// Load previously saved file on startup
+		string drawingLocation = Application.dataPath + "/Drawings";
+		DirectoryInfo directory = new DirectoryInfo(drawingLocation);
+		IOrderedEnumerable<FileInfo> drawFiles = directory.GetFiles("*.json")
+			.OrderByDescending(f => f.LastWriteTime);
+
+		if (drawFiles.Count() > 0) {
+			_tubeTool.ImportDrawing(drawFiles.First().FullName);
 		}
 	}
 
@@ -70,7 +75,6 @@ public class ToolManager : MonoBehaviour {
 	}
 
 	public void Undo() {
-		Debug.Log(_undoStack.Count);
 		// Only run if there are commands to Undo
 		if (_undoStack.Count > 0) {
 			ICommand command = _undoStack.Pop();

@@ -52,6 +52,7 @@ public class ViveStrokeReader : MonoBehaviour {
         }
 
         if (_isTriggerHeld) {
+            // Make cursor point relative to current parent (Trackers / World Drawing)
             Vector3 currentPos = _drawParent.InverseTransformPoint(_cursor.transform.position);
 
             // We might need to add more sophisticated position smoothing than this

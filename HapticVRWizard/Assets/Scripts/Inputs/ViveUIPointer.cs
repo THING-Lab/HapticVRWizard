@@ -52,7 +52,6 @@ public class ViveUIPointer : MonoBehaviour {
 		RaycastHit hitInfo;
 		// Make this not infinity
 		bool hasHit = Physics.Raycast(ray, out hitInfo, Mathf.Infinity, _menuLayerMask);
-		// Physics.Raycast(transform.position, transform.forward, out hitInfo, Mathf.Infinity, _menuLayerMask)
 
 		if (hasHit) {
 			_pointer.SetActive(true);
