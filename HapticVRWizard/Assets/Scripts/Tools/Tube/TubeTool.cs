@@ -12,7 +12,7 @@ public class TubeTool : MonoBehaviour, ITool {
 
 	// Maybe reset tube? or pass color info
 	public void StartStroke(Transform parent) {
-		//_preview.transform.SetParent(parent);
+		_preview.transform.SetParent(parent, false);
 	}
 
 	public void UpdateStroke(Vector3 point, float scale) {
@@ -23,7 +23,7 @@ public class TubeTool : MonoBehaviour, ITool {
 		GameObject newTube = (GameObject)Instantiate(_tube);
 		newTube.GetComponent<TubeDraw>().GenerateFrom(verts, tris, uvs);
 		newTube.GetComponent<TubeDraw>().Id = id;
-		newTube.transform.SetParent(parent);
+		newTube.transform.SetParent(parent, false);
 		_allTubes.Add(newTube);
 	}
 

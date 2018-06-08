@@ -17,6 +17,7 @@ public class ViveStrokeReader : MonoBehaviour {
     private Vector3 _lastPos = new Vector3(-1000, -1000, -1000);
     public GameObject _cursor;
     public ToolManager _toolManager;
+    public Transform _drawParent;
 
     private SteamVR_TrackedObject _trackedObj;
     private SteamVR_Controller.Device Controller {
@@ -51,12 +52,12 @@ public class ViveStrokeReader : MonoBehaviour {
         }
 
         if (_isTriggerHeld) {
-            Vector3 currentPos = _trackedObj.transform.position;
+            Vector3 currentPos = _drawParent.InverseTransformPoint(_cursor.transform.position);
 
             // We might need to add more sophisticated position smoothing than this
             if (Vector3.Distance(currentPos, _lastPos) >= _moveThreshold)
             {
-                _toolManager.UpdateStroke(_cursor.transform.position, _currentRadius);
+                _toolManager.UpdateStroke(currentPos, _currentRadius);
                 _lastPos = currentPos;
             }
         }
