@@ -52,7 +52,6 @@ public class ViveUIPointer : MonoBehaviour {
 		RaycastHit hitInfo;
 		// Make this not infinity
 		bool hasHit = Physics.Raycast(ray, out hitInfo, Mathf.Infinity, _menuLayerMask);
-		// Physics.Raycast(transform.position, transform.forward, out hitInfo, Mathf.Infinity, _menuLayerMask)
 
 		if (hasHit) {
 			_pointer.SetActive(true);
@@ -67,10 +66,20 @@ public class ViveUIPointer : MonoBehaviour {
 			GetComponent<ViveStrokeReader>().SetPointerMode(true);
 
 			// Find first hit button
+			// This'll need to change
 			if (hitInfo.collider.tag == "MenuButton") {
 				// Only start drawing if not pointing at menu
 				if (Controller.GetHairTriggerDown()) {
+					// Should I create an Interface for this?
 					hitInfo.collider.gameObject.GetComponent<ViveMenuButton>().Execute();
+				}
+			}
+
+			if (hitInfo.collider.tag == "MenuToggle") {
+				// Only start drawing if not pointing at menu
+				if (Controller.GetHairTriggerDown()) {
+					// Should I create an Interface for this?
+					hitInfo.collider.gameObject.GetComponent<ViveMenuToggle>().Execute();
 				}
 			}
 		} else {

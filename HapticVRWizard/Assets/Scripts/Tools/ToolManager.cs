@@ -20,17 +20,6 @@ public class ToolManager : MonoBehaviour {
 	void Start () {
 		// Initial Tool Choice, Probs want to display this in the UI somehow
 		_currentTool = _tubeTool;
-
-		// Load previously saved file on startup
-		// Possibly move this to a menu option
-		string drawingLocation = Application.dataPath + "/Drawings";
-		DirectoryInfo directory = new DirectoryInfo(drawingLocation);
-		IOrderedEnumerable<FileInfo> drawFiles = directory.GetFiles("*.json")
-			.OrderByDescending(f => f.LastWriteTime);
-
-		if (drawFiles.Count() > 0) {
-			_tubeTool.ImportDrawing(drawFiles.First().FullName);
-		}
 	}
 
 	void Update () {
@@ -43,23 +32,39 @@ public class ToolManager : MonoBehaviour {
 		}
 
 		if(Input.GetKeyDown(KeyCode.E)) {
-			string date = System.DateTime.Now.ToString()
-				.Replace(" ", "_")
-				.Replace("/", "-")
-				.Replace(":", ".");
-
-			string filename = Application.dataPath + "/Drawings/drawing_" + date + ".json";
-			_tubeTool.ExportDrawing(filename);
+			SaveDrawing();
 		}
 	}
 
-	public void StartStroke() {
-		_currentTool.StartStroke();
+	public void SaveDrawing() {
+		string date = System.DateTime.Now.ToString()
+			.Replace(" ", "_")
+			.Replace("/", "-")
+			.Replace(":", ".");
+
+		string filename = Application.dataPath + "/Drawings/drawing_" + date + ".json";
+		_tubeTool.ExportDrawing(filename);
 	}
 
-	public void EndStroke() {
+	public void LoadDrawing() {
+		// Load previously saved file on startup
+		string drawingLocation = Application.dataPath + "/Drawings";
+		DirectoryInfo directory = new DirectoryInfo(drawingLocation);
+		IOrderedEnumerable<FileInfo> drawFiles = directory.GetFiles("*.json")
+			.OrderByDescending(f => f.LastWriteTime);
+
+		if (drawFiles.Count() > 0) {
+			_tubeTool.ImportDrawing(drawFiles.First().FullName);
+		}
+	}
+
+	public void StartStroke(Transform parent) {
+		_currentTool.StartStroke(parent);
+	}
+
+	public void EndStroke(Transform parent) {
 		// Save command once the stroke has been completed for undo/redo
-		ICommand command = (ICommand)_currentTool.EndStroke();
+		ICommand command = (ICommand)_currentTool.EndStroke(parent);
 		_undoStack.Push(command);
 		_redoStack.Clear();
 	}
@@ -69,7 +74,6 @@ public class ToolManager : MonoBehaviour {
 	}
 
 	public void Undo() {
-		Debug.Log(_undoStack.Count);
 		// Only run if there are commands to Undo
 		if (_undoStack.Count > 0) {
 			ICommand command = _undoStack.Pop();

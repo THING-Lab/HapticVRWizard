@@ -8,7 +8,7 @@ public class LineTool : MonoBehaviour, ITool {
 	public List<GameObject> _allLines = new List<GameObject>();
 	private int _currentObject;
 
-	public void StartStroke() {
+	public void StartStroke(Transform parent) {
 		GameObject newLine = (GameObject)Instantiate(_line);
 		_allLines.Add(newLine);
 	}
@@ -18,7 +18,7 @@ public class LineTool : MonoBehaviour, ITool {
 	}
 
 	// This needs to change
-	public ICommand EndStroke() {
+	public ICommand EndStroke(Transform parent) {
 		return new LineCommand();
 	}
 }

@@ -17,6 +17,11 @@ public class ViveStrokeReader : MonoBehaviour {
     private Vector3 _lastPos = new Vector3(-1000, -1000, -1000);
     public GameObject _cursor;
     public ToolManager _toolManager;
+    private int _drawParentId;
+    public List<Transform> _trackers;
+    private Transform DrawParent {
+        get { return _trackers[_drawParentId]; }
+    }
 
     private SteamVR_TrackedObject _trackedObj;
     private SteamVR_Controller.Device Controller {
@@ -33,6 +38,10 @@ public class ViveStrokeReader : MonoBehaviour {
         _cursor.SetActive(!setting);
     }
 
+    public void SetDrawParent(int newId) {
+        _drawParentId = newId;
+    }
+
     void Awake () {
         _trackedObj = GetComponent<SteamVR_TrackedObject>();
     }
@@ -42,21 +51,22 @@ public class ViveStrokeReader : MonoBehaviour {
         // Only start drawing if not pointing at menu
         if (Controller.GetHairTriggerDown() && !_isPointerMode) {
             _isTriggerHeld = true;
-            _toolManager.StartStroke();
+            _toolManager.StartStroke(DrawParent);
         }
 
         if (Controller.GetHairTriggerUp() && _isTriggerHeld) {
             _isTriggerHeld = false;
-            _toolManager.EndStroke();
+            _toolManager.EndStroke(DrawParent);
         }
 
         if (_isTriggerHeld) {
-            Vector3 currentPos = _trackedObj.transform.position;
+            // Make cursor point relative to current parent (Trackers / World Drawing)
+            Vector3 currentPos = DrawParent.InverseTransformPoint(_cursor.transform.position);
 
             // We might need to add more sophisticated position smoothing than this
             if (Vector3.Distance(currentPos, _lastPos) >= _moveThreshold)
             {
-                _toolManager.UpdateStroke(_cursor.transform.position, _currentRadius);
+                _toolManager.UpdateStroke(currentPos, _currentRadius);
                 _lastPos = currentPos;
             }
         }
@@ -87,6 +97,15 @@ public class ViveStrokeReader : MonoBehaviour {
             _prevTouch = Controller.GetAxis();
         }
 
-        _isTouchHeld = currentTouch; 
+        _isTouchHeld = currentTouch;
+
+        // Debug Keyboard stuff for trackers
+        if(Input.GetKeyDown(KeyCode.Alpha0)) {
+            _drawParentId = 0;
+		}
+
+        if(Input.GetKeyDown(KeyCode.Alpha1)) {
+            _drawParentId = 1;
+		}
     }
 }
