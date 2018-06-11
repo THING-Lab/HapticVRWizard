@@ -66,10 +66,20 @@ public class ViveUIPointer : MonoBehaviour {
 			GetComponent<ViveStrokeReader>().SetPointerMode(true);
 
 			// Find first hit button
+			// This'll need to change
 			if (hitInfo.collider.tag == "MenuButton") {
 				// Only start drawing if not pointing at menu
 				if (Controller.GetHairTriggerDown()) {
+					// Should I create an Interface for this?
 					hitInfo.collider.gameObject.GetComponent<ViveMenuButton>().Execute();
+				}
+			}
+
+			if (hitInfo.collider.tag == "MenuToggle") {
+				// Only start drawing if not pointing at menu
+				if (Controller.GetHairTriggerDown()) {
+					// Should I create an Interface for this?
+					hitInfo.collider.gameObject.GetComponent<ViveMenuToggle>().Execute();
 				}
 			}
 		} else {

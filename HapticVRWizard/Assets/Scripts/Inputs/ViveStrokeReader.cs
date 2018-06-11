@@ -38,6 +38,10 @@ public class ViveStrokeReader : MonoBehaviour {
         _cursor.SetActive(!setting);
     }
 
+    public void SetDrawParent(int newId) {
+        _drawParentId = newId;
+    }
+
     void Awake () {
         _trackedObj = GetComponent<SteamVR_TrackedObject>();
     }
