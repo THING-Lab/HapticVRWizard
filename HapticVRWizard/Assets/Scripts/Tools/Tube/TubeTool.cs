@@ -47,7 +47,7 @@ public class TubeTool : MonoBehaviour, ITool {
 	public void ImportDrawing(Scene drawing, Transform parent) {
 		foreach(Geometry geo in drawing.geometries) {
 			GameObject newTube = (GameObject)Instantiate(_tube);
-			newTube.transform.SetParent(parent);
+			newTube.transform.SetParent(parent, false);
 			_allTubes.Add(newTube);
 			_allTubes.Last().GetComponent<TubeDraw>().LoadMesh(geo);
 		}

@@ -52,10 +52,11 @@ public class JSONExportManager : MonoBehaviour {
 			.GetFiles("*.json");
 		
 		foreach (FileInfo file in drawFiles) {
-			// Scene scene = ReadFromFile(fileName);
-			Debug.Log(file.Name);
-
-			// 	_tubeLoader.ImportDrawing(drawFiles.First().FullName, something.something.transform);
+			Scene scene = ReadFromFile(file.FullName);
+			_tubeLoader.ImportDrawing(
+				scene,
+				_drawParents.Find(o => o.name == file.Name.Replace(".json", "")).transform
+			);
 		}
 	}
 	public void ExportMeshes(List<GameObject> objects, string filename) {
