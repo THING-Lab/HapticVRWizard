@@ -292,5 +292,4 @@ sysinfo.txt
 *.unitypackage
 
 # Saved drawing files
-HapticVRWizard/Assets/Drawings/*.json
-HapticVRWizard/Assets/Drawings/*.json.meta
+HapticVRWizard/Assets/Drawings/**

@@ -32,29 +32,7 @@ public class ToolManager : MonoBehaviour {
 		}
 
 		if(Input.GetKeyDown(KeyCode.E)) {
-			SaveDrawing();
-		}
-	}
-
-	public void SaveDrawing() {
-		string date = System.DateTime.Now.ToString()
-			.Replace(" ", "_")
-			.Replace("/", "-")
-			.Replace(":", ".");
-
-		string filename = Application.dataPath + "/Drawings/drawing_" + date + ".json";
-		_tubeTool.ExportDrawing(filename);
-	}
-
-	public void LoadDrawing() {
-		// Load previously saved file on startup
-		string drawingLocation = Application.dataPath + "/Drawings";
-		DirectoryInfo directory = new DirectoryInfo(drawingLocation);
-		IOrderedEnumerable<FileInfo> drawFiles = directory.GetFiles("*.json")
-			.OrderByDescending(f => f.LastWriteTime);
-
-		if (drawFiles.Count() > 0) {
-			_tubeTool.ImportDrawing(drawFiles.First().FullName);
+			// SaveDrawing();
 		}
 	}
 
