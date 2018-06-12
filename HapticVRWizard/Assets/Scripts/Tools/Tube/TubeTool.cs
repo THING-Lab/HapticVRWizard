@@ -43,16 +43,11 @@ public class TubeTool : MonoBehaviour, ITool {
 		return tc;
 	}
 
-	public void ExportDrawing(string filename) {
-		_exporter.ExportMeshes(_allTubes, filename);
-	}
-
 	// I should move some of this to the TubeDraw script probably
-	public void ImportDrawing(string filename) {
-		Scene oldScene = _exporter.ReadFromFile(filename);
-
-		foreach(Geometry geo in oldScene.geometries) {
+	public void ImportDrawing(Scene drawing, Transform parent) {
+		foreach(Geometry geo in drawing.geometries) {
 			GameObject newTube = (GameObject)Instantiate(_tube);
+			newTube.transform.SetParent(parent, false);
 			_allTubes.Add(newTube);
 			_allTubes.Last().GetComponent<TubeDraw>().LoadMesh(geo);
 		}
