@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class ToolManager : MonoBehaviour {
 
-	public LineTool _lineTool;
+	public RibbonTool _ribbonTool;
 	public TubeTool _tubeTool;
 
 	// Undo Redo Datastructures
@@ -20,6 +20,7 @@ public class ToolManager : MonoBehaviour {
 	void Start () {
 		// Initial Tool Choice, Probs want to display this in the UI somehow
 		_currentTool = _tubeTool;
+		print(_ribbonTool);
 	}
 
 	void Update () {
@@ -28,11 +29,7 @@ public class ToolManager : MonoBehaviour {
 		}
 
 		if(Input.GetKeyDown(KeyCode.L)) {
-			_currentTool = _lineTool;
-		}
-
-		if(Input.GetKeyDown(KeyCode.E)) {
-			// SaveDrawing();
+			_currentTool = _ribbonTool;
 		}
 	}
 
@@ -47,8 +44,8 @@ public class ToolManager : MonoBehaviour {
 		_redoStack.Clear();
 	}
 
-	public void UpdateStroke(Vector3 pos, float r) {
-		_currentTool.UpdateStroke(pos, r);
+	public void UpdateStroke(Vector3 pos, Vector3 rot, float r) {
+		_currentTool.UpdateStroke(pos, rot, r);
 	}
 
 	public void Undo() {

@@ -66,7 +66,7 @@ public class ViveStrokeReader : MonoBehaviour {
             // We might need to add more sophisticated position smoothing than this
             if (Vector3.Distance(currentPos, _lastPos) >= _moveThreshold)
             {
-                _toolManager.UpdateStroke(currentPos, _currentRadius);
+                _toolManager.UpdateStroke(currentPos, transform.eulerAngles, _currentRadius);
                 _lastPos = currentPos;
             }
         }

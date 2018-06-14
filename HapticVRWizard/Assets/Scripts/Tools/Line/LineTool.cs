@@ -13,7 +13,7 @@ public class LineTool : MonoBehaviour, ITool {
 		_allLines.Add(newLine);
 	}
 
-	public void UpdateStroke(Vector3 point, float scale) {
+	public void UpdateStroke(Vector3 point, Vector3 rotation, float scale) {
 		_allLines.Last().GetComponent<LineDraw>().AddPoint(point);
 	}
 

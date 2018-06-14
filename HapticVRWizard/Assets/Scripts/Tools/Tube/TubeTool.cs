@@ -15,7 +15,7 @@ public class TubeTool : MonoBehaviour, ITool {
 		_preview.transform.SetParent(parent, false);
 	}
 
-	public void UpdateStroke(Vector3 point, float scale) {
+	public void UpdateStroke(Vector3 point, Vector3 rotation, float scale) {
 		_preview.AddPoint(point, scale);
 	}
 
