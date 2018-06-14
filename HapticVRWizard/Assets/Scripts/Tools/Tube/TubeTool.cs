@@ -11,19 +11,21 @@ public class TubeTool : MonoBehaviour, ITool {
 	public List<GameObject> _allTubes = new List<GameObject>();
 
 	// Maybe reset tube? or pass color info
-	public void StartStroke(Transform parent) {
+	public void StartStroke(Transform parent, Material mat) {
 		_preview.transform.SetParent(parent, false);
+		_preview.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(mat);
 	}
 
-	public void UpdateStroke(Vector3 point, Vector3 rotation, float scale) {
+	public void UpdateStroke(Vector3 point, Quaternion rotation, float scale) {
 		_preview.AddPoint(point, scale);
 	}
 
-	public void AddTube(string id, List<Vector3> verts, List<int> tris, List<Vector2> uvs, Transform parent) {
+	public void AddTube(string id, List<Vector3> verts, List<int> tris, List<Vector2> uvs, Transform parent, Material mat) {
 		GameObject newTube = (GameObject)Instantiate(_tube);
 		newTube.GetComponent<TubeDraw>().GenerateFrom(verts, tris, uvs);
 		newTube.GetComponent<TubeDraw>().Id = id;
 		newTube.transform.SetParent(parent, false);
+		newTube.GetComponent<Renderer>().material = mat;
 		_allTubes.Add(newTube);
 	}
 
@@ -33,10 +35,10 @@ public class TubeTool : MonoBehaviour, ITool {
 		Destroy(delTube);
 	}
 
-	public ICommand EndStroke(Transform parent) {
+	public ICommand EndStroke(Transform parent, Material mat) {
 		string tubeId = System.Guid.NewGuid().ToString();
 		// Reset Preview and Pass it's data to the new tube
-		TubeCommand tc = new TubeCommand(tubeId, this, _preview.Vertices, _preview.Tris, _preview.Uvs, parent);
+		TubeCommand tc = new TubeCommand(tubeId, this, _preview.Vertices, _preview.Tris, _preview.Uvs, parent, mat);
 		_preview.Reset();
 		tc.Execute();
 

@@ -89,7 +89,12 @@ ModelImporter:
     4300020: Object_11
     4300022: Object_12
     4300024: Object_13
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: New material 003
+    second: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   materials:
     importMaterials: 1
     materialName: 0
