@@ -96,22 +96,23 @@ public class RibbonDraw : MonoBehaviour {
 
 	public void AddPoint(Vector3 p, Vector3 r, float s) {
 		_pointsList.Add(p);
-		Vector3 v0 = new Vector3(s, 0f, 0f);
-		Vector3 v1 = new Vector3(-s, 0f, 0f);
+		Vector3 v0 = new Vector3(1, 0f, 0f);
+		Vector3 v1 = new Vector3(-1, 0f, 0f);
 
 		// Mapybe just pass the quat
 		Quaternion rotation = Quaternion.Euler(r.x, r.y, r.z);
 		Matrix4x4 m = Matrix4x4.Rotate(rotation);
         
-    	v0 = m.MultiplyPoint3x4(v0);
-		v1 = m.MultiplyPoint3x4(v1);
+    	v0 = v0 * s;
+		v1 = v1 * s;
+		// v1 = new Vector3(0f, 0f, 0f);
 
 		_verts.Add(v0 + p);
 		_verts.Add(v1 + p);
 
 		// UVs here, idk how to calculate them
-		_uvs.Add(new Vector2(1, 0));
-		_uvs.Add(new Vector2(1, 0));
+		_uvs.Add(new Vector2(0, 0));
+		_uvs.Add(new Vector2(0, 0));
 
 		if (_pointsList.Count > 1) {
 			_tris.AddRange(CreateTriSegment(_verts.Count));
