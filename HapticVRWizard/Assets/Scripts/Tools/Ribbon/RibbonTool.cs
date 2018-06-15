@@ -12,17 +12,19 @@ public class RibbonTool : MonoBehaviour, ITool {
 	// Maybe reset tube? or pass color info
 	public void StartStroke(Transform parent, Material mat) {
 		_preview.transform.SetParent(parent, false);
+		_preview.GetComponent<Renderer>().material = mat;
 	}
 
 	public void UpdateStroke(Vector3 point, Quaternion rotation, float scale) {
 		_preview.AddPoint(point, rotation, scale);
 	}
 
-	public void AddRibbon(string id, List<Vector3> verts, List<int> tris, List<Vector2> uvs, Transform parent) {
+	public void AddRibbon(string id, List<Vector3> verts, List<int> tris, List<Vector2> uvs, Transform parent, Material mat) {
 		GameObject newRibbon = (GameObject)Instantiate(_ribbon);
 		newRibbon.GetComponent<RibbonDraw>().GenerateFrom(verts, tris, uvs);
 		newRibbon.GetComponent<RibbonDraw>().Id = id;
 		newRibbon.transform.SetParent(parent, false);
+		newRibbon.GetComponent<Renderer>().material = mat;
 		_allRibbons.Add(newRibbon);
 	}
 
@@ -35,7 +37,7 @@ public class RibbonTool : MonoBehaviour, ITool {
 	public ICommand EndStroke(Transform parent, Material mat) {
 		string ribbonId = System.Guid.NewGuid().ToString();
 		// Reset Preview and Pass it's data to the new tube
-		RibbonCommand rc = new RibbonCommand(ribbonId, this, _preview.Vertices, _preview.Tris, _preview.Uvs, parent);
+		RibbonCommand rc = new RibbonCommand(ribbonId, this, _preview.Vertices, _preview.Tris, _preview.Uvs, parent, mat);
 		_preview.Reset();
 		rc.Execute();
 

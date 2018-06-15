@@ -12,6 +12,8 @@ public class ToolManager : MonoBehaviour {
 	public Material _defaultMat;
 	public Color _defaultColor;
 
+	public List<Material> _materials;
+
 	// Undo Redo Datastructures
 	private Stack<ICommand> _undoStack = new Stack<ICommand>();
 	private Stack<ICommand> _redoStack = new Stack<ICommand>();
@@ -24,15 +26,23 @@ public class ToolManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		// Initial Tool Choice, Probs want to display this in the UI somehow
-		_currentTool = _ribbonTool;
+		_currentTool = _tubeTool;
 		_mat = _defaultMat;
 		_col = _defaultColor;
 		_mat.color = _col;
 	}
 
-	public void SetMaterial(Material newMat) {
-		_mat = new Material(newMat);
-		_mat.color = _col;
+	public void SetMaterial(string newMat) {
+		// Handle for when material does not exist
+		_mat = _materials.Find(m => m.name == newMat);
+	}
+
+	public void SetBrush(int brushId) {
+		if (brushId == 0) {
+			_currentTool = _tubeTool;
+		} else if (brushId == 1) {
+			_currentTool = _ribbonTool;
+		}
 	}
 
 	public void SetColor(Color newCol) {

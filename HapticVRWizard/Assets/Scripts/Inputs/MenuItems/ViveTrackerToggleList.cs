@@ -9,9 +9,9 @@ public class ViveTrackerToggleList : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		for (int i = 0; i < _trackers.Count; i++) {
-			if (!_trackers[i].active && _toggles[i].IsEnabled) {
+			if (!_trackers[i].activeSelf && _toggles[i].IsEnabled) {
 				_toggles[i].Disable();
-			} else if (_trackers[i].active && !_toggles[i].IsEnabled) {
+			} else if (_trackers[i].activeSelf && !_toggles[i].IsEnabled) {
 				_toggles[i].Enable();
 			}
 		}

@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class KeyboardShortcuts : MonoBehaviour {
-	public Material _mats0;
-	public Material _mats1;
-	public List<Color> _colors;
-
 	public ToolManager _tools;
 
 	// Use this for initialization
@@ -16,28 +12,58 @@ public class KeyboardShortcuts : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if(Input.GetKeyDown(KeyCode.S)) {
+			// Save
+		}
+		if(Input.GetKeyDown(KeyCode.D)) {
+			// Load
+		}
+
+		if(Input.GetKeyDown(KeyCode.K)) {
+			_tools.SetBrush(0);
+		}
+		if(Input.GetKeyDown(KeyCode.L)) {
+			_tools.SetBrush(1);
+		}
+		
 		if(Input.GetKeyDown(KeyCode.Alpha1)) {
-			_tools.SetMaterial(_mats0);
+			_tools.SetMaterial("ShadedWhite");
 		}
 
 		if(Input.GetKeyDown(KeyCode.Alpha2)) {
-			_tools.SetMaterial(_mats1);
+			_tools.SetMaterial("ShadedRed");
+		}
+
+		if(Input.GetKeyDown(KeyCode.Alpha3)) {
+			_tools.SetMaterial("ShadedGreen");
+		}
+
+		if(Input.GetKeyDown(KeyCode.Alpha4)) {
+			_tools.SetMaterial("ShadedBlue");
+		}
+
+		if(Input.GetKeyDown(KeyCode.Alpha5)) {
+			_tools.SetMaterial("ShadedOrange");
 		}
 
 		if(Input.GetKeyDown(KeyCode.Q)) {
-			_tools.SetColor(_colors[0]);
+			_tools.SetMaterial("UnlitWhite");
 		}
 
 		if(Input.GetKeyDown(KeyCode.W)) {
-			_tools.SetColor(_colors[1]);
+			_tools.SetMaterial("UnlitRed");
 		}
 
 		if(Input.GetKeyDown(KeyCode.E)) {
-			_tools.SetColor(_colors[2]);
+			_tools.SetMaterial("UnlitGreen");
 		}
 
 		if(Input.GetKeyDown(KeyCode.R)) {
-			_tools.SetColor(_colors[3]);
+			_tools.SetMaterial("UnlitBlue");
+		}
+
+		if(Input.GetKeyDown(KeyCode.T)) {
+			_tools.SetMaterial("UnlitOrange");
 		}
 	}
 }

@@ -113,6 +113,39 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!21 &25484426
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Sprites/Default
+  m_Shader: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AlphaTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - PixelSnap: 0
+    - _EnableExternalAlpha: 0
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &124160958
 GameObject:
   m_ObjectHideFlags: 0
@@ -361,39 +394,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 288380751}
---- !u!21 &341740724
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: Sprites/Default
-  m_Shader: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _AlphaTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - PixelSnap: 0
-    - _EnableExternalAlpha: 0
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Flip: {r: 1, g: 1, b: 1, a: 1}
-    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1001 &341897465
 Prefab:
   m_ObjectHideFlags: 0
@@ -440,11 +440,11 @@ Prefab:
     - target: {fileID: 3380982, guid: 4d293c8e162f3874b982baadd71153d2, type: 2}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 2140168290}
+      objectReference: {fileID: 2077254921}
     - target: {fileID: 2348914, guid: 4d293c8e162f3874b982baadd71153d2, type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 341740724}
+      objectReference: {fileID: 25484426}
     - target: {fileID: 11416958, guid: 4d293c8e162f3874b982baadd71153d2, type: 2}
       propertyPath: objects.Array.data[0]
       value: 
@@ -1802,6 +1802,17 @@ MonoBehaviour:
   _tubeTool: {fileID: 436803751}
   _defaultMat: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   _defaultColor: {r: 0.7607844, g: 0.7607844, b: 0.7607844, a: 1}
+  _materials:
+  - {fileID: 2100000, guid: 55ca4c9934725c14284823610e94901b, type: 2}
+  - {fileID: 2100000, guid: a069b7af9a093ad489f56727aaec8c1e, type: 2}
+  - {fileID: 2100000, guid: 9f4847d33e63b63418b56396192f56d2, type: 2}
+  - {fileID: 2100000, guid: 868a5291c46b7674b9dc891082cf3912, type: 2}
+  - {fileID: 2100000, guid: 94476a35e489398408a4fef0ef4daa5a, type: 2}
+  - {fileID: 2100000, guid: 624af9bd69efaf24c9873eb98fcc8805, type: 2}
+  - {fileID: 2100000, guid: 587d507a9f7a6704ca75d0c4abe55160, type: 2}
+  - {fileID: 2100000, guid: 4081896aba103e04e8b60bbdd67fe08f, type: 2}
+  - {fileID: 2100000, guid: 661f853552a3d8d4d8a3b0ad3e79e8dd, type: 2}
+  - {fileID: 2100000, guid: b9f80cee03f44c24bb20339f063a745d, type: 2}
 --- !u!1 &1222616339
 GameObject:
   m_ObjectHideFlags: 0
@@ -2412,13 +2423,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b10112948a80bf643bf5a900958bf4c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mats0: {fileID: 2100000, guid: d788f5b7defacb44183833245acceb45, type: 2}
-  _mats1: {fileID: 2100000, guid: 12adfa0d657d14642b8324401140aced, type: 2}
-  _colors:
-  - {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 1}
-  - {r: 1, g: 0.4481132, b: 0.4481132, a: 1}
-  - {r: 0.4764151, g: 0.7838021, b: 1, a: 1}
-  - {r: 0.72338176, g: 1, b: 0.4764151, a: 1}
   _tools: {fileID: 1211958582}
 --- !u!114 &1671715782 stripped
 MonoBehaviour:
@@ -3117,7 +3121,7 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!43 &2140168290
+--- !u!43 &2077254921
 Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}

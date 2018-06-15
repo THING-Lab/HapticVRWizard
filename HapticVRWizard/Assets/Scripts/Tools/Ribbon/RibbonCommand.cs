@@ -12,16 +12,18 @@ public class RibbonCommand : ICommand {
 	private List<int> _tris;
 	private RibbonTool _tool;
 	private Transform _parent;
+	private Material _mat;
 
 	public string Id { get { return _id; } }
 
-	public RibbonCommand(string id, RibbonTool tool, List<Vector3> verts, List<int> tris, List<Vector2> uvs, Transform parent) {
+	public RibbonCommand(string id, RibbonTool tool, List<Vector3> verts, List<int> tris, List<Vector2> uvs, Transform parent, Material mat) {
 		_id = id;
 		_tool = tool;
 		_verts = verts;
 		_tris = tris;
 		_uvs = uvs;
 		_parent = parent;
+		_mat = mat;
 	}
 
 	public void Undo() {
@@ -29,6 +31,6 @@ public class RibbonCommand : ICommand {
 	}
 
 	public void Execute() {
-		_tool.AddRibbon(_id, _verts, _tris, _uvs, _parent);
+		_tool.AddRibbon(_id, _verts, _tris, _uvs, _parent, _mat);
 	}
 }
