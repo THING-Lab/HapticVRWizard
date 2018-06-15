@@ -11,7 +11,7 @@ public class RibbonTool : MonoBehaviour, ITool {
 
 	// Maybe reset tube? or pass color info
 	public void StartStroke(Transform parent, Material mat) {
-		_preview.transform.SetParent(parent);
+		_preview.transform.SetParent(parent, false);
 	}
 
 	public void UpdateStroke(Vector3 point, Quaternion rotation, float scale) {
@@ -22,7 +22,7 @@ public class RibbonTool : MonoBehaviour, ITool {
 		GameObject newRibbon = (GameObject)Instantiate(_ribbon);
 		newRibbon.GetComponent<RibbonDraw>().GenerateFrom(verts, tris, uvs);
 		newRibbon.GetComponent<RibbonDraw>().Id = id;
-		newRibbon.transform.SetParent(parent);
+		newRibbon.transform.SetParent(parent, false);
 		_allRibbons.Add(newRibbon);
 	}
 
