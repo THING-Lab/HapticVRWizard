@@ -23,6 +23,10 @@ public class ToolManager : MonoBehaviour {
 	private string _mat;
 	private string _color;
 
+	private Material Mat {
+		get { return _materials.Find(m => m.name == (_mat + _color)); }
+	}
+
 
 	// Use this for initialization
 	void Start () {
@@ -35,13 +39,11 @@ public class ToolManager : MonoBehaviour {
 	public void SetMaterial(string newMat) {
 		// Handle for when material does not exist
 		_mat = newMat;
-		_materials.Find(m => m.name == (_mat + _color));
 	}
 
 	public void SetColor(string newColor) {
 		// Handle for when material does not exist
-		_color = _newColor;
-		_materials.Find(m => m.name == (_mat + _color));
+		_color = newColor;
 	}
 
 	// Make the brush ID an enum or something so this ain't hard codeds
@@ -54,12 +56,12 @@ public class ToolManager : MonoBehaviour {
 	}
 
 	public void StartStroke(Transform parent) {
-		_currentTool.StartStroke(parent, _mat);
+		_currentTool.StartStroke(parent, Mat);
 	}
 
 	public void EndStroke(Transform parent) {
 		// Save command once the stroke has been completed for undo/redo
-		ICommand command = (ICommand)_currentTool.EndStroke(parent, _mat);
+		ICommand command = (ICommand)_currentTool.EndStroke(parent, Mat);
 		_undoStack.Push(command);
 		_redoStack.Clear();
 	}
