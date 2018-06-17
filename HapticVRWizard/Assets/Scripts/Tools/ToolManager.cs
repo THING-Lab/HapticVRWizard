@@ -9,8 +9,8 @@ public class ToolManager : MonoBehaviour {
 	public RibbonTool _ribbonTool;
 	public TubeTool _tubeTool;
 
-	public Material _defaultMat;
-	public Color _defaultColor;
+	public string _defaultMat;
+	public string _defaultColor;
 
 	public List<Material> _materials;
 
@@ -18,36 +18,39 @@ public class ToolManager : MonoBehaviour {
 	private Stack<ICommand> _undoStack = new Stack<ICommand>();
 	private Stack<ICommand> _redoStack = new Stack<ICommand>();
 
-	private Material _mat;
-	private Color _col;
-
 	private ITool _currentTool;
+
+	private string _mat;
+	private string _color;
+
 
 	// Use this for initialization
 	void Start () {
 		// Initial Tool Choice, Probs want to display this in the UI somehow
 		_currentTool = _tubeTool;
 		_mat = _defaultMat;
-		_col = _defaultColor;
-		_mat.color = _col;
+		_color = _defaultColor;
 	}
 
 	public void SetMaterial(string newMat) {
 		// Handle for when material does not exist
-		_mat = _materials.Find(m => m.name == newMat);
+		_mat = newMat;
+		_materials.Find(m => m.name == (_mat + _color));
 	}
 
+	public void SetColor(string newColor) {
+		// Handle for when material does not exist
+		_color = _newColor;
+		_materials.Find(m => m.name == (_mat + _color));
+	}
+
+	// Make the brush ID an enum or something so this ain't hard codeds
 	public void SetBrush(int brushId) {
-		if (brushId == 0) {
+		if (brushId == 1) {
 			_currentTool = _tubeTool;
-		} else if (brushId == 1) {
+		} else if (brushId == 0) {
 			_currentTool = _ribbonTool;
 		}
-	}
-
-	public void SetColor(Color newCol) {
-		_col = newCol;
-		_mat.color = _col;
 	}
 
 	public void StartStroke(Transform parent) {
