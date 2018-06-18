@@ -14,6 +14,8 @@ public class ToolManager : MonoBehaviour {
 
 	public List<Material> _materials;
 
+	public BrushCursorManager _cursor;
+
 	// Undo Redo Datastructures
 	private Stack<ICommand> _undoStack = new Stack<ICommand>();
 	private Stack<ICommand> _redoStack = new Stack<ICommand>();
@@ -34,16 +36,20 @@ public class ToolManager : MonoBehaviour {
 		_currentTool = _tubeTool;
 		_mat = _defaultMat;
 		_color = _defaultColor;
+		// This should probably be set by a material manager
+		_cursor.SetCursorMat(Mat);
 	}
 
 	public void SetMaterial(string newMat) {
 		// Handle for when material does not exist
 		_mat = newMat;
+		_cursor.SetCursorMat(Mat);
 	}
 
 	public void SetColor(string newColor) {
 		// Handle for when material does not exist
 		_color = newColor;
+		_cursor.SetCursorMat(Mat);
 	}
 
 	public Material GetLoadedMat(string mat) {
