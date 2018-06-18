@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class TubeTool : MonoBehaviour, ITool {
 	public GameObject _tube;
+	public ToolManager _tools;
 	public JSONExportManager _exporter;
 	public TubeDraw _preview;
 	// Should this be static?
@@ -50,6 +51,8 @@ public class TubeTool : MonoBehaviour, ITool {
 		foreach(Geometry geo in drawing.geometries) {
 			GameObject newTube = (GameObject)Instantiate(_tube);
 			newTube.transform.SetParent(parent, false);
+			// Some ugly long way to load a material
+			newTube.GetComponent<Renderer>().material = _tools.GetLoadedMat(geo.data.attributes.mat);
 			_allTubes.Add(newTube);
 			_allTubes.Last().GetComponent<TubeDraw>().LoadMesh(geo);
 		}

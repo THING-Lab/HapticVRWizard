@@ -63,7 +63,6 @@ public class ViveMenuToggle : MonoBehaviour {
 	}
 
 	public void Execute() {
-		Debug.Log("It's Comin Ian");
 		if (_isEnabled) {
 			if (_isSelected) {
 				// If there is a parent manager don't fire the deselect event

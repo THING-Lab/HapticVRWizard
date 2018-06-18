@@ -46,6 +46,10 @@ public class ToolManager : MonoBehaviour {
 		_color = newColor;
 	}
 
+	public Material GetLoadedMat(string mat) {
+		return _materials.Find(m => m.name == mat);
+	}
+
 	// Make the brush ID an enum or something so this ain't hard codeds
 	public void SetBrush(int brushId) {
 		if (brushId == 1) {
