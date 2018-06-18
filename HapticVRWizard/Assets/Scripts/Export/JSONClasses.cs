@@ -99,7 +99,6 @@ public class GeometryAttrs {
 			// tempMat.CopyPropertiesFromMaterial(mats[material]);
 			// AssetDatabase.CreateAsset(tempMat, "Assets/Gen/TempMat.mat");
 
-
 			int[] triangles = m.GetTriangles(material);
 			for (int i=0; i < triangles.Length; i += 1) {
 				Vector3 v = t.TransformPoint(m.vertices[triangles[i]]);
