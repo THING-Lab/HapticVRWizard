@@ -66,13 +66,7 @@ public class JSONExportManager : MonoBehaviour {
 
 		Scene currentScene = new Scene();
 		foreach(GameObject geo in objects) {
-			Transform t = geo.transform; 
-			Vector3 originalPosition = t.position;
-			t.position = Vector3.zero;
-
-			currentScene.AddGeometry(t);
-
-			t.position = originalPosition;
+			currentScene.AddGeometry(geo.transform);
 		}
 
 		string json = JsonUtility.ToJson(currentScene);

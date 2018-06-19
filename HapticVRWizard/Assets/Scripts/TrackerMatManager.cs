@@ -8,17 +8,14 @@ public class TrackerMatManager : MonoBehaviour {
 	public Material _inactiveMat;
 	// Update is called once per frame
 	public void SetActiveTrackerMat(int activeId) {
-		// Is the id of a possible tracker
-		if (activeId >= 0 && activeId < _trackerModels.Count) {
-			for (int id = 0; id < _trackerModels.Count; id++) {
-				if (id == activeId) {
-					_trackerModels[id].material = _activeMat;
-				} else {
-					_trackerModels[id].material = _inactiveMat;
-				}
+
+		for (int id = 0; id < _trackerModels.Count; id++) {
+			_trackerModels[id].material = _inactiveMat;
+
+			// Is the id of a possible tracker
+			if (activeId >= 0 && activeId < _trackerModels.Count && id == activeId) {
+				_trackerModels[id].material = _activeMat;
 			}
-		} else {
-			Debug.Log("Tracker ID out of bounds, was this intended... Probably yes ;)");
 		}
 	} 
 }

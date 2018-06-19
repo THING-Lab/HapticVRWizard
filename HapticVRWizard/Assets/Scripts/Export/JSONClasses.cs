@@ -101,12 +101,12 @@ public class GeometryAttrs {
 
 			int[] triangles = m.GetTriangles(material);
 			for (int i=0; i < triangles.Length; i += 1) {
-				Vector3 v = t.TransformPoint(m.vertices[triangles[i]]);
+				Vector3 v = m.vertices[triangles[i]];
 				position.array.Add(v.x);
 				position.array.Add(v.y);
 				position.array.Add(v.z);
 
-				Vector3 n = r * m.normals[triangles[i]];
+				Vector3 n = m.normals[triangles[i]];
 				normal.array.Add(n.x);
 				normal.array.Add(n.y);
 				normal.array.Add(n.z);
