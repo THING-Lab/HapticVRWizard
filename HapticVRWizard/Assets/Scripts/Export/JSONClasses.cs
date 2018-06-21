@@ -78,8 +78,13 @@ public class GeometryAttrs {
 	public GeometryAttribute position = new GeometryAttribute();
 	public GeometryAttribute normal = new GeometryAttribute();
 	public GeometryAttribute uvs = new GeometryAttribute();
+	public string mat = "ShadedWhite";
 
 	public void SetAttributes(Transform t) {
+		// Hack bc material name has instance in it :/
+		mat = t.GetComponent<Renderer>().material.name.Split(' ')[0];
+		Debug.Log(mat);
+
 		uvs.itemSize = 2;
 		MeshFilter mf = t.GetComponent<MeshFilter>();
 		Mesh m = mf.sharedMesh;
@@ -88,12 +93,7 @@ public class GeometryAttrs {
 		Vector3 p = t.localPosition;
 		Quaternion r = t.localRotation;
 
-		// These need to change shape?
-		foreach(Vector3 v in m.uv) {
-			
-		}
-
-		for (int material=0; material < m.subMeshCount; material ++) {
+		for (int material = 0; material < m.subMeshCount; material ++) {
 			// For material saving as mat files in unity O.o
 			// Material tempMat = new Material(mats[material].shader);
 			// tempMat.CopyPropertiesFromMaterial(mats[material]);
@@ -101,15 +101,14 @@ public class GeometryAttrs {
 
 			int[] triangles = m.GetTriangles(material);
 			for (int i=0; i < triangles.Length; i += 1) {
-				Vector3 v = t.TransformPoint(m.vertices[triangles[i]]);
+				Vector3 v = m.vertices[triangles[i]];
 				position.array.Add(v.x);
 				position.array.Add(v.y);
-				position.array.Add(-v.z);
+				position.array.Add(v.z);
 
-				Vector3 n = r * m.normals[triangles[i]];
-				// What is the logic behind these negations?
-				normal.array.Add(-n.x);
-				normal.array.Add(-n.y);
+				Vector3 n = m.normals[triangles[i]];
+				normal.array.Add(n.x);
+				normal.array.Add(n.y);
 				normal.array.Add(n.z);
 
 				Vector2 uv = m.uv[triangles[i]];

@@ -14,9 +14,9 @@ public class ViveMenuToggle : MonoBehaviour {
 		get { return _isEnabled; }
 	}
 
-	public Color _unselectedColor;
-	public Color _disabledColor;
-	public Color _selectedColor;
+	public GameObject _selectedImage;
+	public GameObject _unselectedImage;
+
 	public int _trackerId;
 
 	private ViveMenuRadioList ParentList {
@@ -25,7 +25,8 @@ public class ViveMenuToggle : MonoBehaviour {
 
 	public void Start() {
 		if (_isSelected) {
-			GetComponent<Image>().color = _selectedColor;
+			_unselectedImage.SetActive(false);
+			_selectedImage.SetActive(true);
 		}
 	}
 
@@ -33,19 +34,22 @@ public class ViveMenuToggle : MonoBehaviour {
 		// Might want to handle for if this is the selected one here...
 		_isSelected = false;
 		_isEnabled = false;
-		GetComponent<Image>().color = _disabledColor;
+		_unselectedImage.SetActive(true);
+		_selectedImage.SetActive(false);
 	}
 
 	public void Enable() {
 		_isEnabled = true;
-		GetComponent<Image>().color = _unselectedColor;
+		_unselectedImage.SetActive(true);
+		_selectedImage.SetActive(false);
 	}
 
 	public void Deselect() {
 		if (_isEnabled) {
 			_isSelected = false;
-			// Actual display of state
-			GetComponent<Image>().color = _unselectedColor;
+			// Acutal display of state
+			_selectedImage.SetActive(false);
+			_unselectedImage.SetActive(true);
 		}
 	}
 
@@ -53,7 +57,8 @@ public class ViveMenuToggle : MonoBehaviour {
 		if (_isEnabled) {
 			_isSelected = true;
 			// Actual display of state
-			GetComponent<Image>().color = _selectedColor;
+			_unselectedImage.SetActive(false);
+			_selectedImage.SetActive(true);
 		}
 	}
 
@@ -68,6 +73,7 @@ public class ViveMenuToggle : MonoBehaviour {
 			} else {
 				// Check if there is a parent manager, if so call it's deselect function first for the others
 				if (ParentList != null) {
+					// This should be in a separate script
 					ParentList.DeselectOthers(_trackerId);
 				}
 				_selectEvent.Invoke();

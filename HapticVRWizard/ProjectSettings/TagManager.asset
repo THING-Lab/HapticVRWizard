@@ -8,6 +8,8 @@ TagManager:
   - MenuButton
   - MenuToggle
   - NotExportable
+  - TubeStroke
+  - RibbonStroke
   layers:
   - Default
   - TransparentFX

@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class JSONExportManager : MonoBehaviour {
 	public List<GameObject> _drawParents;
+	// Make this a generic mesh loader
 	public TubeTool _tubeLoader;
 
 	public void SaveScene() {
@@ -65,17 +66,10 @@ public class JSONExportManager : MonoBehaviour {
 
 		Scene currentScene = new Scene();
 		foreach(GameObject geo in objects) {
-			Transform t = geo.transform; 
-			Vector3 originalPosition = t.position;
-			t.position = Vector3.zero;
-
-			currentScene.AddGeometry(t);
-
-			t.position = originalPosition;
+			currentScene.AddGeometry(geo.transform);
 		}
 
 		string json = JsonUtility.ToJson(currentScene);
- 
 		WriteToFile(json, filename);
 		Debug.Log("Exported Mesh: " + filename);
 	}

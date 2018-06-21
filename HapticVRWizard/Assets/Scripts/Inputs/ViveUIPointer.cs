@@ -48,12 +48,15 @@ public class ViveUIPointer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		Ray ray = new Ray(transform.position, transform.TransformDirection(Vector3.forward));
+		Vector3 rayPos = transform.position + new Vector3(0f, 0f, 0f);
+		Vector3 rayDirection = new Vector3(0f, -5f, 1f).normalized;
+
+		Ray ray = new Ray(rayPos, transform.TransformDirection(Vector3.forward));
 		RaycastHit hitInfo;
 		// Make this not infinity
 		bool hasHit = Physics.Raycast(ray, out hitInfo, Mathf.Infinity, _menuLayerMask);
 
-		if (hasHit) {
+		if (hasHit && hitInfo.distance < 0.35f) {
 			_pointer.SetActive(true);
 			_hitPoint.SetActive(true);
 

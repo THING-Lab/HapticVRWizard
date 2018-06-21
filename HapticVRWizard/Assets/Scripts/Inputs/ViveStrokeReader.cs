@@ -39,6 +39,7 @@ public class ViveStrokeReader : MonoBehaviour {
     }
 
     public void SetDrawParent(int newId) {
+        print("called");
         _drawParentId = newId;
     }
 
@@ -66,7 +67,7 @@ public class ViveStrokeReader : MonoBehaviour {
             // We might need to add more sophisticated position smoothing than this
             if (Vector3.Distance(currentPos, _lastPos) >= _moveThreshold)
             {
-                _toolManager.UpdateStroke(currentPos, _currentRadius);
+                _toolManager.UpdateStroke(currentPos, transform.rotation, _currentRadius);
                 _lastPos = currentPos;
             }
         }
@@ -98,14 +99,5 @@ public class ViveStrokeReader : MonoBehaviour {
         }
 
         _isTouchHeld = currentTouch;
-
-        // Debug Keyboard stuff for trackers
-        if(Input.GetKeyDown(KeyCode.Alpha0)) {
-            _drawParentId = 0;
-		}
-
-        if(Input.GetKeyDown(KeyCode.Alpha1)) {
-            _drawParentId = 1;
-		}
     }
 }
