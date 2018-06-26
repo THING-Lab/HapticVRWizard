@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Valve.VR;
 
 public class ViveStrokeReader : MonoBehaviour {
     private bool _isTriggerHeld = false;
@@ -10,7 +11,7 @@ public class ViveStrokeReader : MonoBehaviour {
     public float _moveThreshold = 0.005f;
 
     private float _pressTime = 0f;
-    private const float LONG_PRESS_TIME = 2f;
+    private const float LONG_PRESS_TIME = 1.2f;
 
     private float _radiusScale = 1.0f;
     private float _defaultScale = 0.02f;
@@ -81,6 +82,9 @@ public class ViveStrokeReader : MonoBehaviour {
 
         if (_isTriggerHeld) {
             _pressTime += Time.deltaTime;
+            if (!_toolManager.IsStrokeTool && _pressTime > LONG_PRESS_TIME) {
+                Controller.TriggerHapticPulse(500, EVRButtonId.k_EButton_SteamVR_Trigger);
+            }
         }
 
         // Radius Change
