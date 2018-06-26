@@ -9,6 +9,9 @@ public class ViveStrokeReader : MonoBehaviour {
     private Vector2 _prevTouch = new Vector2(0, 0);
     public float _moveThreshold = 0.005f;
 
+    private float _pressTime = 0f;
+    private const float LONG_PRESS_TIME = 2f;
+
     private float _radiusScale = 1.0f;
     private float _defaultScale = 0.02f;
     private float _currentRadius = 0.02f;
@@ -39,7 +42,6 @@ public class ViveStrokeReader : MonoBehaviour {
     }
 
     public void SetDrawParent(int newId) {
-        print("called");
         _drawParentId = newId;
     }
 
@@ -53,14 +55,19 @@ public class ViveStrokeReader : MonoBehaviour {
         if (Controller.GetHairTriggerDown() && !_isPointerMode) {
             _isTriggerHeld = true;
             _toolManager.StartStroke(DrawParent);
+            _pressTime = 0;
         }
 
         if (Controller.GetHairTriggerUp() && _isTriggerHeld) {
             _isTriggerHeld = false;
             _toolManager.EndStroke(DrawParent);
+            
+            if (!_toolManager.IsStrokeTool && _pressTime > LONG_PRESS_TIME) {
+                _toolManager.EndTriangle(DrawParent);
+            }
         }
 
-        if (_isTriggerHeld) {
+        if (_isTriggerHeld || !_toolManager.IsStrokeTool) {
             // Make cursor point relative to current parent (Trackers / World Drawing)
             Vector3 currentPos = DrawParent.InverseTransformPoint(_cursor.transform.position);
 
@@ -70,6 +77,10 @@ public class ViveStrokeReader : MonoBehaviour {
                 _toolManager.UpdateStroke(currentPos, transform.rotation, _currentRadius);
                 _lastPos = currentPos;
             }
+        }
+
+        if (_isTriggerHeld) {
+            _pressTime += Time.deltaTime;
         }
 
         // Radius Change

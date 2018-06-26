@@ -1,15 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
-public class RibbonDraw : MonoBehaviour {
+public class TriangleDraw : MonoBehaviour {
 	private Mesh _mesh;
 	private MeshFilter _meshFilter;
 	private List<Vector3> _pointsList = new List<Vector3>();
 	private int _numSegments = 10;
 	private string _id;
-
+	private bool _isSettingPoint = false;
+	public bool IsSettingPoint {
+		get { return _isSettingPoint; }
+		set { _isSettingPoint = value; }
+	}
 	// Mesh Props
 	private List<Vector3> _verts = new List<Vector3>();
 	private List<int> _tris = new List<int>();
@@ -65,18 +68,6 @@ public class RibbonDraw : MonoBehaviour {
 		_mesh.Clear();
 	}
 
-	private List<int> CreateTriSegment(int vertCount) {
-		// 4 new verts are added every time
-		return new List<int> {
-			vertCount - 7, vertCount - 8, vertCount - 4,
-			vertCount - 7, vertCount - 4, vertCount - 3,
-
-			vertCount - 6, vertCount - 5, vertCount - 2,
-			vertCount - 2, vertCount - 5, vertCount - 1
-		};
-	}
-
-	// Duplicate
 	public void GenerateFrom(List<Vector3> verts, List<int> tris, List<Vector2> uvs) {
 		_verts = verts;
 		_tris = tris;
@@ -95,37 +86,40 @@ public class RibbonDraw : MonoBehaviour {
 		_mesh.RecalculateNormals();
 	}
 
-	public void AddPoint(Vector3 p, Quaternion r, float s) {
-		_pointsList.Add(p);
-		Vector3 v0 = new Vector3(s, 0f, 0f);
-		Vector3 v1 = new Vector3(-s, 0f, 0f);
-		Vector3 v2 = new Vector3(s, -0.001f, 0f);
-		Vector3 v3 = new Vector3(-s, -0.001f, 0f);
+	public void UpdateCurrentPoint(Vector3 p) {
+		if (!_isSettingPoint) {
+			AddPoint(p);
+			_isSettingPoint = true;
+		} else {
+			_verts[_verts.Count - 1] = p;
+			// Make the added vectors consts?
+			_verts[_verts.Count - 2] = p + new Vector3(0f, -0.001f, 0f);
+		}
 
-		// Multiply given(controller) rotation by inverse of parent rotation so you can remove the changes
-		Quaternion localRotation = Quaternion.Inverse(transform.parent.rotation) * r;
-        
-    	v0 = localRotation * v0;
-		v1 = localRotation * v1;
-		v2 = localRotation * v2;
-		v3 = localRotation * v3;
-		// v1 = new Vector3(0f, 0f, 0f);
+		UpdateMesh();
+	}
+
+	public void AddPoint(Vector3 p) {
+		_pointsList.Add(p);
+		Vector3 v0 = Vector3.zero;
+		Vector3 v1 = new Vector3(0f, -0.001f, 0f);
 
 		_verts.Add(v0 + p);
 		_verts.Add(v1 + p);
-		_verts.Add(v2 + p);
-		_verts.Add(v3 + p);
 
 		// UVs here, idk how to calculate them
 		_uvs.Add(new Vector2(0, 0));
 		_uvs.Add(new Vector2(0, 0));
-		_uvs.Add(new Vector2(0, 0));
-		_uvs.Add(new Vector2(0, 0));
 
-		if (_pointsList.Count > 1) {
-			_tris.AddRange(CreateTriSegment(_verts.Count));
+		// Only start generating faces once we have 3 points
+		if (_pointsList.Count > 2) {
+			_tris.Add(_verts.Count - 2);
+			_tris.Add(_verts.Count - 4);
+			_tris.Add(_verts.Count - 6);
+
+			_tris.Add(_verts.Count - 5);
+			_tris.Add(_verts.Count - 3);
+			_tris.Add(_verts.Count - 1);
 		}
-
-		UpdateMesh();
 	}
 }
