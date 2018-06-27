@@ -8,6 +8,9 @@ using UnityEngine;
 public class ToolManager : MonoBehaviour {
 	public RibbonTool _ribbonTool;
 	public TubeTool _tubeTool;
+	public TriangleTool _triangleTool;
+	private bool _isMidTriangle = false;
+	public enum ToolTypes { Ribbon, Tube, Triangle };
 
 	public string _defaultMat;
 	public string _defaultColor;
@@ -21,6 +24,9 @@ public class ToolManager : MonoBehaviour {
 	private Stack<ICommand> _redoStack = new Stack<ICommand>();
 
 	private ITool _currentTool;
+	public bool IsStrokeTool {
+		get { return (typeof(RibbonTool) == _currentTool.GetType() || typeof(TubeTool) == _currentTool.GetType()); }
+	}
 
 	private string _mat;
 	private string _color;
@@ -58,25 +64,51 @@ public class ToolManager : MonoBehaviour {
 
 	// Make the brush ID an enum or something so this ain't hard codeds
 	public void SetBrush(int brushId) {
-		if (brushId == 1) {
+		SetBrush((ToolTypes)brushId);
+	}
+
+	public void SetBrush(ToolTypes brushId) {
+		if ((ToolTypes)brushId == ToolTypes.Tube) {
 			_currentTool = _tubeTool;
-		} else if (brushId == 0) {
+		} else if ((ToolTypes)brushId == ToolTypes.Ribbon) {
 			_currentTool = _ribbonTool;
+		} else if ((ToolTypes)brushId == ToolTypes.Triangle) {
+			_currentTool = _triangleTool;
 		}
+
+		_isMidTriangle = false;
 	}
 
 	public void StartStroke(Transform parent) {
-		_currentTool.StartStroke(parent, Mat);
+		if (!_isMidTriangle) {
+			_currentTool.StartStroke(parent, Mat);
+			_isMidTriangle = !IsStrokeTool;
+		}
 	}
 
 	public void EndStroke(Transform parent) {
-		// Save command once the stroke has been completed for undo/redo
-		ICommand command = (ICommand)_currentTool.EndStroke(parent, Mat);
-		_undoStack.Push(command);
-		_redoStack.Clear();
+		if (!_isMidTriangle) {
+			// Save command once the stroke has been completed for undo/redo
+			ICommand command = (ICommand)_currentTool.EndStroke(parent, Mat);
+			_undoStack.Push(command);
+			_redoStack.Clear();
+		} else {
+			_triangleTool.StartNewTri();
+		}
+	}
+
+	public void EndTriangle(Transform parent) {
+		if (_isMidTriangle) {
+			// Save command once the stroke has been completed for undo/redo
+			ICommand command = (ICommand)_currentTool.EndStroke(parent, Mat);
+			_undoStack.Push(command);
+			_redoStack.Clear();
+			_isMidTriangle = false;
+		}
 	}
 
 	public void UpdateStroke(Vector3 pos, Quaternion rot, float r) {
+		// Maybe have this do something else if it's not drawing triangles
 		_currentTool.UpdateStroke(pos, rot, r);
 	}
 

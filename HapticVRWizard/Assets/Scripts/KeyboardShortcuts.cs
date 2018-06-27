@@ -20,10 +20,10 @@ public class KeyboardShortcuts : MonoBehaviour {
 		}
 
 		if(Input.GetKeyDown(KeyCode.K)) {
-			_tools.SetBrush(0);
+			_tools.SetBrush(ToolManager.ToolTypes.Ribbon);
 		}
 		if(Input.GetKeyDown(KeyCode.L)) {
-			_tools.SetBrush(1);
+			_tools.SetBrush(ToolManager.ToolTypes.Tube);
 		}
 		
 		if(Input.GetKeyDown(KeyCode.Alpha1)) {

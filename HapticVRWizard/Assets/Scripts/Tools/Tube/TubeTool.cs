@@ -6,7 +6,6 @@ using UnityEngine;
 public class TubeTool : MonoBehaviour, ITool {
 	public GameObject _tube;
 	public ToolManager _tools;
-	public JSONExportManager _exporter;
 	public TubeDraw _preview;
 	// Should this be static?
 	public List<GameObject> _allTubes = new List<GameObject>();

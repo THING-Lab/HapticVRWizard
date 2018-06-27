@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class RibbonTool : MonoBehaviour, ITool {
 	public GameObject _ribbon;
-	public JSONExportManager _exporter;
 	public RibbonDraw _preview;
 	// Should this be static?
 	public List<GameObject> _allRibbons = new List<GameObject>();

@@ -19,6 +19,5 @@ public class BrushCursorManager : MonoBehaviour {
 	public void SetCursorMat(Material mat) {
 		_tube.GetComponent<Renderer>().material = mat;
 		_ribbon.GetComponent<Renderer>().material = mat;
-		Debug.Log("Mat set");
 	}
 }
