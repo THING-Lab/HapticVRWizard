@@ -17,7 +17,7 @@ public class TubeTool : MonoBehaviour, ITool {
 	}
 
 	public void UpdateStroke(Vector3 point, Quaternion rotation, float scale) {
-		_preview.AddPoint(point, scale);
+		_preview.AddPoint(point, rotation, scale);
 	}
 
 	public void AddTube(string id, List<Vector3> verts, List<int> tris, List<Vector2> uvs, Transform parent, Material mat) {
