@@ -4,12 +4,23 @@ using UnityEngine;
 
 public class TriangleDraw : StrokeDraw {
 	private bool _isSettingPoint = false;
+	private List<Vector3> _redoPoints;
 	private int[] prevVerts = { 0, 1 };
 	private int[] nextPrevVerts = { 0, 1 };
 	private int windingCheck = 1;
 	public bool IsSettingPoint {
 		get { return _isSettingPoint; }
 		set { _isSettingPoint = value; }
+	}
+
+	public override void Reset() {
+		base.Reset();
+		_isSettingPoint = false;
+		prevVerts[0] = 0;
+		prevVerts[1] = 1;
+		nextPrevVerts[0] = 0;
+		nextPrevVerts[1] = 1;
+		windingCheck = 1;
 	}
 
 	public void UpdateCurrentPoint(Vector3 p) {
