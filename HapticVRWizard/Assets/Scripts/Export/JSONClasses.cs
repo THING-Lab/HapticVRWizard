@@ -50,14 +50,17 @@ public class ObjectData {
 
 [System.Serializable]
 public class Geometry {
-	public GeometryMetadata metadata = new GeometryMetadata();
+	public GeometryMetadata metadata;
 	public string uuid =  "";
-  public string type = "BufferGeometry";
+  	public string type = "BufferGeometry";
 	public GeometryData data = new GeometryData();
 
 	public Geometry(Transform t, string id) {
 		data.attributes.SetAttributes(t);
 		uuid = id;
+	
+		string mat = t.GetComponent<Renderer>().material.name.Split(' ')[0];
+		metadata = new GeometryMetadata(mat);
 	}
 }
 
@@ -66,6 +69,11 @@ public class GeometryMetadata {
 	public double version = 4.5;
 	public string type = "BufferGeometry";
 	public string generator = "BufferGeometry.toJSON";
+	public string mat = "ShadedWhite";
+
+	public GeometryMetadata(string meshMat) {
+		mat = meshMat;
+	}
 }
 
 [System.Serializable]
@@ -78,13 +86,8 @@ public class GeometryAttrs {
 	public GeometryAttribute position = new GeometryAttribute();
 	public GeometryAttribute normal = new GeometryAttribute();
 	public GeometryAttribute uvs = new GeometryAttribute();
-	public string mat = "ShadedWhite";
 
 	public void SetAttributes(Transform t) {
-		// Hack bc material name has instance in it :/
-		mat = t.GetComponent<Renderer>().material.name.Split(' ')[0];
-		Debug.Log(mat);
-
 		uvs.itemSize = 2;
 		MeshFilter mf = t.GetComponent<MeshFilter>();
 		Mesh m = mf.sharedMesh;

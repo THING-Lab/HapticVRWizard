@@ -34,7 +34,7 @@ public class DrawingImport : MonoBehaviour {
 			GameObject newTube = (GameObject)Instantiate(_meshPrefab);
 			newTube.transform.SetParent(transform.parent, false);
 			// Some ugly long way to load a material
-			newTube.GetComponent<Renderer>().material = GetLoadedMat(geo.data.attributes.mat);
+			newTube.GetComponent<Renderer>().material = GetLoadedMat(geo.metadata.mat);
 			_allTubes.Add(newTube);
 			_allTubes.Last().GetComponent<TubeDraw>().LoadMesh(geo);
 		}

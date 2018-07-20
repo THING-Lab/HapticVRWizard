@@ -51,7 +51,7 @@ public class TubeTool : MonoBehaviour, ITool {
 			GameObject newTube = (GameObject)Instantiate(_tube);
 			newTube.transform.SetParent(parent, false);
 			// Some ugly long way to load a material
-			newTube.GetComponent<Renderer>().material = _tools.GetLoadedMat(geo.data.attributes.mat);
+			newTube.GetComponent<Renderer>().material = _tools.GetLoadedMat(geo.metadata.mat);
 			_allTubes.Add(newTube);
 			_allTubes.Last().GetComponent<TubeDraw>().LoadMesh(geo);
 		}
