@@ -8,9 +8,31 @@ public class TriangleDraw : StrokeDraw {
 	private int[] prevVerts = { 0, 1 };
 	private int[] nextPrevVerts = { 0, 1 };
 	private int windingCheck = 1;
+	private GameObject _segmentPreview;
 	public bool IsSettingPoint {
 		get { return _isSettingPoint; }
 		set { _isSettingPoint = value; }
+	}
+
+	private LineRenderer PreviewLine {
+		get { return _segmentPreview.GetComponent<LineRenderer>(); }
+	}
+
+	void Start() {
+		// Only used for preview
+		_segmentPreview = new GameObject();
+		_segmentPreview.AddComponent<LineRenderer>();
+		PreviewLine.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
+		PreviewLine.startWidth = 0.003f;
+		PreviewLine.endWidth = 0.003f;
+		_segmentPreview.SetActive(false);
+	}
+
+	public void SetMaterial(Material mat) {
+		gameObject.GetComponent<Renderer>().material = mat;
+		// PreviewLine.material = mat;
+		PreviewLine.startColor = mat.color;
+		PreviewLine.endColor = mat.color;
 	}
 
 	public override void Reset() {
@@ -42,7 +64,17 @@ public class TriangleDraw : StrokeDraw {
 	}
 
 	private void recalucalteTris() {
+		// Set the preview or something
+		if (_pointsList.Count == 1) {
+			_segmentPreview.SetActive(false);
+			PreviewLine.SetPosition(0, _pointsList[0]);
+		} else if (_pointsList.Count == 2) {
+			_segmentPreview.SetActive(true);
+			PreviewLine.SetPosition(1, _pointsList[1]);
+		}
+
 		if (_pointsList.Count > 3) {
+			_segmentPreview.SetActive(false);
 			// This is the magic
 			int currentVert = _pointsList.Count - 1;
 
