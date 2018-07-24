@@ -32,7 +32,12 @@ public class JSONExportManager : MonoBehaviour {
 			}
 
 			if (children.Count > 0) {
-				ExportMeshes(children, fileName);
+				string deviceId = "untracked";
+				if (drawing.GetComponent<TrackerIdGet>() != null) {
+					deviceId = drawing.GetComponent<TrackerIdGet>().DeviceID;
+				}
+
+				ExportMeshes(children, fileName, deviceId);
 			}
 		}
 	}
@@ -53,18 +58,18 @@ public class JSONExportManager : MonoBehaviour {
 			.GetFiles("*.json");
 		
 		foreach (FileInfo file in drawFiles) {
-			Scene scene = ReadFromFile(file.FullName);
+			JsonScene scene = ReadFromFile(file.FullName);
 			_tubeLoader.ImportDrawing(
 				scene,
 				_drawParents.Find(o => o.name == file.Name.Replace(".json", "")).transform
 			);
 		}
 	}
-	public void ExportMeshes(List<GameObject> objects, string filename) {
+	public void ExportMeshes(List<GameObject> objects, string filename, string trackerId) {
 		// string fileName = EditorUtility.SaveFilePanel("Export .obj file", "", meshName, "obj");
 		// string fileName = Application.dataPath + "/" + gameObject.name + ".obj"; // you can also use: "/storage/sdcard1/" +gameObject.
 
-		Scene currentScene = new Scene();
+		JsonScene currentScene = new JsonScene(trackerId);
 		foreach(GameObject geo in objects) {
 			currentScene.AddGeometry(geo.transform);
 		}
@@ -80,8 +85,8 @@ public class JSONExportManager : MonoBehaviour {
 		}
 	}
 
-	public Scene ReadFromFile(string filename) {
+	public JsonScene ReadFromFile(string filename) {
 		string sceneText = File.ReadAllText(filename).Replace("object", "sceneObject");
-		return JsonUtility.FromJson<Scene>(sceneText);
+		return JsonUtility.FromJson<JsonScene>(sceneText);
 	}
 }

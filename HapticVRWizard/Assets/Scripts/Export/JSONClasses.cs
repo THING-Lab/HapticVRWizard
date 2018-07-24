@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Might need to namespace this :/
 [System.Serializable]
-public class Scene {
+public class JsonScene {
 	public SceneMetadata metadata = new SceneMetadata();
 	public List<Geometry> geometries = new List<Geometry>();
 	public SceneObject sceneObject = new SceneObject();
+
+	public JsonScene(string dId) {
+		metadata.deviceId = dId;
+	}
 
 	public void AddGeometry(Transform t) {
 		string uuid = System.Guid.NewGuid().ToString();
@@ -22,6 +27,7 @@ public class SceneMetadata {
   public double version = 4.5;
   public string type = "Object";
   public string generator = "Object3D.toJSON";
+  public string deviceId = null;
 }
 
 [System.Serializable]

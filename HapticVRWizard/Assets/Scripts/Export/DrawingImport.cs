@@ -14,7 +14,7 @@ public class DrawingImport : MonoBehaviour {
 	void Start () {
 		string filePath = Path.Combine(Application.streamingAssetsPath, _fileName);
 		string sceneText = File.ReadAllText(filePath).Replace("object", "sceneObject");
-		LoadMesh(JsonUtility.FromJson<Scene>(sceneText));
+		LoadMesh(JsonUtility.FromJson<JsonScene>(sceneText));
 	}
 	
 	// Update is called once per frame
@@ -29,7 +29,7 @@ public class DrawingImport : MonoBehaviour {
 		return _materials.Find(m => m.name == mat);
 	}
 
-	private void LoadMesh(Scene drawing) {
+	private void LoadMesh(JsonScene drawing) {
 		foreach(Geometry geo in drawing.geometries) {
 			GameObject newTube = (GameObject)Instantiate(_meshPrefab);
 			newTube.transform.SetParent(transform.parent, false);
