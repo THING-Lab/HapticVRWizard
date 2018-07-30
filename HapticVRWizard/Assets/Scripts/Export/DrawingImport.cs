@@ -5,20 +5,12 @@ using System.Linq;
 using UnityEngine;
 
 public class DrawingImport : MonoBehaviour {
-	public string _fileName;
 	public GameObject _meshPrefab;
 	public List<Material> _materials;
 	private List<GameObject> _allTubes = new List<GameObject>();
 
-	// Use this for initialization
-	void Start () {
-		string filePath = Path.Combine(Application.streamingAssetsPath, _fileName);
-		string sceneText = File.ReadAllText(filePath).Replace("object", "sceneObject");
-		LoadMesh(JsonUtility.FromJson<JsonScene>(sceneText));
-	}
-	
-	// Update is called once per frame
 	void Update () {
+		// wtf was the point of this
 		foreach(GameObject stroke in _allTubes) {
 			if (stroke.transform.parent != transform.parent) {
 				stroke.transform.SetParent(transform.parent, false);
@@ -29,7 +21,7 @@ public class DrawingImport : MonoBehaviour {
 		return _materials.Find(m => m.name == mat);
 	}
 
-	private void LoadMesh(JsonScene drawing) {
+	public void LoadMesh(JsonScene drawing) {
 		foreach(Geometry geo in drawing.geometries) {
 			GameObject newTube = (GameObject)Instantiate(_meshPrefab);
 			newTube.transform.SetParent(transform.parent, false);

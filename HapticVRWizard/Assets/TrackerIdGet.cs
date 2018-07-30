@@ -13,7 +13,7 @@ public class TrackerIdGet : MonoBehaviour {
 	}
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		ETrackedPropertyError error = new ETrackedPropertyError();
 		List<string> trackerIds = new List<string>();
 
@@ -35,6 +35,8 @@ public class TrackerIdGet : MonoBehaviour {
 			}
 		}
 
-		_deviceID = trackerIds[_trackerIndex];
+		if (_trackerIndex + 1 <= trackerIds.Count) {
+			_deviceID = trackerIds[_trackerIndex];
+		}
 	}
 }
