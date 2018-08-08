@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using Valve.VR;
 
 public class ViveTrackerSelector : MonoBehaviour {
-	public List<ViveTrackerSelectionTarget> _targets;
+	public List<GameObject> _targets;
 	public float _thickness = 0.002f;
 	public Color _color;
 	private GameObject _pointer;
@@ -36,6 +36,7 @@ public class ViveTrackerSelector : MonoBehaviour {
 		Object.DestroyImmediate(_pointer.GetComponent<BoxCollider>());
 
 		// Just create a real mat
+		// The color here doesn't work at all
 		Material pointerMat = new Material(Shader.Find("Unlit/Texture"));
 		pointerMat.SetColor("_Color", _color);
 		_pointer.GetComponent<MeshRenderer>().material = pointerMat;
@@ -48,21 +49,31 @@ public class ViveTrackerSelector : MonoBehaviour {
 			_isSelectingTracker = true;
 			_pointer.SetActive(true);
 			GetComponent<ViveStrokeReader>().IsSelectorMode = true;
-			foreach (ViveTrackerSelectionTarget target in _targets) {
-				target.SetSelectionMode(_isSelectingTracker);
+			foreach (GameObject target in _targets) {
+				// Using an interface here could cut a couple lines
+				if (target.tag == "TargetLayer") {
+					target.GetComponent<ViveTrackerSelectionTarget>().SetSelectionMode(_isSelectingTracker);
+				} else if (target.tag == "TargetVisibility") {
+					target.GetComponent<ViveTrackerLayerVisibilityTarget>().SetSelectionMode(_isSelectingTracker);
+				}
 			}
 		}
 
 		if (Controller.GetPressUp(EVRButtonId.k_EButton_Grip)) {
 			_isSelectingTracker = false;
 			_pointer.SetActive(false);
+			// Literally copied and pasted from the thing above -.-
 			GetComponent<ViveStrokeReader>().IsSelectorMode = false;
-			foreach (ViveTrackerSelectionTarget target in _targets) {
-				target.SetSelectionMode(_isSelectingTracker);
+			foreach (GameObject target in _targets) {
+				if (target.tag == "TargetLayer") {
+					target.GetComponent<ViveTrackerSelectionTarget>().SetSelectionMode(_isSelectingTracker);
+				} else if (target.tag == "TargetVisibility") {
+					target.GetComponent<ViveTrackerLayerVisibilityTarget>().SetSelectionMode(_isSelectingTracker);
+				}
 			}
 		}
 
-		string trackerName = "";
+		int targetId = 0;
 		bool selectPressed = false;
 
 		if (_isSelectingTracker) {
@@ -79,32 +90,41 @@ public class ViveTrackerSelector : MonoBehaviour {
 				_pointer.transform.localPosition = new Vector3(0.0f, 0.0f, hitInfo.distance * 0.5f);
 
 				// Set selected id here
-				trackerName = hitInfo.collider.gameObject.name;
+				targetId = hitInfo.collider.gameObject.GetInstanceID();
 			} else {
 				_pointer.transform.localScale = new Vector3(_thickness, _thickness, 100.0f);
 				_pointer.transform.localPosition = new Vector3(0.0f, 0.0f, 50.0f);
 			}
 
-			// Select the tracker
+			// Trigger pressed
 			if(Controller.GetHairTriggerDown() && hasHit) {
+				// Determine whether the collider is toggle visibility or layer here
 				selectPressed = true;
 			}
 
 			// Loop through potential targets and set proper mat
-			foreach (ViveTrackerSelectionTarget target in _targets) {
-				if (target.gameObject.name == trackerName) {
+			foreach (GameObject target in _targets) {
+				if (target.GetInstanceID() == targetId) {
 					if (selectPressed) {
 						// Here we need to set the proper target
-						GetComponent<ViveStrokeReader>().DrawParent = target.transform;
-						target.IsSelected = true;
+						if (target.tag == "TargetLayer") {
+							GetComponent<ViveStrokeReader>().DrawParent = target.GetComponent<ViveTrackerSelectionTarget>().selectionParent;
+							target.GetComponent<ViveTrackerSelectionTarget>().IsSelected = true;
+						}
+
+						if (target.tag == "TargetVisibility")
+							target.GetComponent<ViveTrackerLayerVisibilityTarget>().ToggleLayerActive();
 					} else {
-						target.SetHover(true);
+						if (target.tag == "TargetLayer")
+							target.GetComponent<ViveTrackerSelectionTarget>().SetHover(true);
 					}
 				} else {
 					if (selectPressed) {
-						target.IsSelected = false;
+						if (target.tag == "TargetLayer")
+							target.GetComponent<ViveTrackerSelectionTarget>().IsSelected = false;
 					}
-					target.SetHover(false);
+					if (target.tag == "TargetLayer")
+						target.GetComponent<ViveTrackerSelectionTarget>().SetHover(false);
 				}
 			}
 		}
