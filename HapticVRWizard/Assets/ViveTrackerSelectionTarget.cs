@@ -11,7 +11,10 @@ public class ViveTrackerSelectionTarget : MonoBehaviour {
 	public Material _selectionHoverMat;
 
 	private bool _isSelected = false;
-	private bool _isHovered = false;
+	public bool IsSelected {
+		get { return _isSelected; }
+		set { _isSelected = value; }
+	}
 
 	// Use this for initialization
 	void Start () {
@@ -21,7 +24,6 @@ public class ViveTrackerSelectionTarget : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		
 	}
 
 	public void SetSelectionMode(bool isSelecting) {
@@ -29,14 +31,14 @@ public class ViveTrackerSelectionTarget : MonoBehaviour {
 			_mesh.material = _selectionMat;
 		} else {
 			_mesh.material = _idleMat;
-			_isHovered = false;
 		}
 	}
 
-	public void SetHover() {
-		if (!_isHovered) {
-			_isHovered = true;
+	public void SetHover(bool isHover) {
+		if (isHover || _isSelected) {
 			_mesh.material = _selectionHoverMat;
+		} else {
+			_mesh.material = _selectionMat;
 		}
 	}
 }

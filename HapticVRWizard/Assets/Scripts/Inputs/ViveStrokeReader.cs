@@ -22,9 +22,12 @@ public class ViveStrokeReader : MonoBehaviour {
     public GameObject _cursor;
     public ToolManager _toolManager;
     private int _drawParentId;
-    public List<Transform> _trackers;
-    private Transform DrawParent {
-        get { return _trackers[_drawParentId]; }
+
+    public Transform _defaultDrawParent;
+    private Transform _drawParent;
+    public Transform DrawParent {
+        get { return _drawParent; }
+        set { _drawParent = value; }
     }
 
     private SteamVR_TrackedObject _trackedObj;
@@ -37,23 +40,33 @@ public class ViveStrokeReader : MonoBehaviour {
         get { return _isPointerMode; }
     }
 
-    public void SetPointerMode(bool setting) {
-        _isPointerMode = setting;
-        _cursor.SetActive(!setting);
+    private bool _isSelectorMode = false;
+    public bool IsSelectorMode {
+        get { return _isSelectorMode; }
+        set { _isSelectorMode = value; }
     }
 
-    public void SetDrawParent(int newId) {
-        _drawParentId = newId;
+    private bool CanDraw {
+        get { return (!_isPointerMode && !_isSelectorMode); }
+    }
+
+    // REPLACE THIS WITH PROPERTY
+    public void SetPointerMode(bool setting) {
+        _isPointerMode = setting;
     }
 
     void Awake () {
         _trackedObj = GetComponent<SteamVR_TrackedObject>();
+        _drawParent = _defaultDrawParent;
     }
 
     // Update is called once per frame
     void Update () {
+        // Might wanna do this less
+        _cursor.SetActive(!(_isPointerMode || _isSelectorMode));
+
         // Only start drawing if not pointing at menu
-        if (Controller.GetHairTriggerDown() && !_isPointerMode) {
+        if (Controller.GetHairTriggerDown() && CanDraw) {
             _isTriggerHeld = true;
             _toolManager.StartStroke(DrawParent);
             _pressTime = 0;
