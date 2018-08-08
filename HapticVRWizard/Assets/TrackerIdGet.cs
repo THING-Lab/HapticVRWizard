@@ -19,7 +19,18 @@ public class TrackerIdGet : MonoBehaviour {
 
 		for (int i = 0; i < 20; i++) {
 			Valve.VR.ETrackedDeviceClass s = OpenVR.System.GetTrackedDeviceClass((uint)i);
+			Debug.Log(s);
+			StringBuilder build = new StringBuilder();
 
+			// Open VR function for getting the tracker ID
+			OpenVR.System.GetStringTrackedDeviceProperty(
+				(uint)i,
+				ETrackedDeviceProperty.Prop_SerialNumber_String,
+				build,
+				OpenVR.k_unMaxPropertyStringSize, ref error
+			);
+
+			Debug.Log(build.ToString());
 			// Use actual name of class from enum, Might wanna switch to the enum
 			if (s == Valve.VR.ETrackedDeviceClass.GenericTracker) {
 				StringBuilder sb = new StringBuilder();
