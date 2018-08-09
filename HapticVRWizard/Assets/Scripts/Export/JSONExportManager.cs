@@ -6,9 +6,21 @@ using System.Text;
 using UnityEngine;
 
 public class JSONExportManager : MonoBehaviour {
-	public List<GameObject> _drawParents;
+	public GameObject _drawRoot;
 	// Make this a generic mesh loader
 	public TubeTool _tubeLoader;
+	private List<GameObject> DrawParents {
+		get {
+			List<GameObject> parents = new List<GameObject>();
+			foreach (Transform parent in _drawRoot.transform) {
+				if (parent.tag == "DrawParent") {
+					parents.Add(parent.gameObject);
+				}
+			}
+
+			return parents;
+		}
+	}
 
 	public void SaveScene() {
 		// get all mesh groups and generate file names
@@ -21,20 +33,22 @@ public class JSONExportManager : MonoBehaviour {
 		Directory.CreateDirectory(folderName);
 		
 		// For loop here
-		foreach (GameObject drawing in _drawParents) {
-			string fileName = folderName + "/" + drawing.name + ".json";
+		foreach(GameObject drawParent in DrawParents) {
+			string fileName = folderName + "/" + drawParent.name + ".json";
 			List<GameObject> children = new List<GameObject>();
 
-			foreach (Transform child in drawing.transform) {
-				if (child.gameObject.tag != "NotExportable") {
-					children.Add(child.gameObject);
+			// Find all drawyings, ignore their layers
+			// Not saving layers ATM, this ain't photoshop
+			foreach(StrokeDraw stroke in drawParent.GetComponentsInChildren<StrokeDraw>()) {
+				if (stroke.gameObject.tag == "DrawElement") {
+					children.Add(stroke.gameObject);
 				}
 			}
 
 			if (children.Count > 0) {
 				string deviceId = "untracked";
-				if (drawing.GetComponent<TrackerIdGet>() != null) {
-					deviceId = drawing.GetComponent<TrackerIdGet>().DeviceID;
+				if (drawParent.GetComponent<TrackerIdGet>() != null) {
+					deviceId = drawParent.GetComponent<TrackerIdGet>().DeviceID;
 				}
 
 				ExportMeshes(children, fileName, deviceId);
@@ -57,11 +71,12 @@ public class JSONExportManager : MonoBehaviour {
 			.First()
 			.GetFiles("*.json");
 		
+		// This doesn't handle for if the parent doesn't exist :/
 		foreach (FileInfo file in drawFiles) {
 			JsonScene scene = ReadFromFile(file.FullName);
 			_tubeLoader.ImportDrawing(
 				scene,
-				_drawParents.Find(o => o.name == file.Name.Replace(".json", "")).transform
+				DrawParents.Find(o => o.name == file.Name.Replace(".json", "")).transform
 			);
 		}
 	}

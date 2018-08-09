@@ -12,6 +12,8 @@ TagManager:
   - RibbonStroke
   - TargetVisibility
   - TargetLayer
+  - DrawElement
+  - DrawParent
   layers:
   - Default
   - TransparentFX
