@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using Valve.VR;
 
 public class ViveTrackerSelector : MonoBehaviour {
-	public List<GameObject> _targets;
+	public GameObject _targetRoot;
 	public float _thickness = 0.002f;
 	public Color _color;
 	private GameObject _pointer;
@@ -20,6 +20,19 @@ public class ViveTrackerSelector : MonoBehaviour {
 	private SteamVR_Controller.Device Controller {
         get { return SteamVR_Controller.Input((int)_trackedObj.index); }
     }
+
+	private List<GameObject> Targets {
+		get {
+			List<GameObject> selectionTargets = new List<GameObject>();
+			foreach (Transform target in _targetRoot.GetComponentsInChildren<Transform>()) {
+				if (target.tag == "TargetLayer" || target.tag == "TargetVisibility") {
+					selectionTargets.Add(target.gameObject);
+				}
+			}
+
+			return selectionTargets;
+		}
+	}
 
 	// Use this for initialization
 	void Start () {
@@ -49,7 +62,7 @@ public class ViveTrackerSelector : MonoBehaviour {
 			_isSelectingTracker = true;
 			_pointer.SetActive(true);
 			GetComponent<ViveStrokeReader>().IsSelectorMode = true;
-			foreach (GameObject target in _targets) {
+			foreach (GameObject target in Targets) {
 				// Using an interface here could cut a couple lines
 				if (target.tag == "TargetLayer") {
 					target.GetComponent<ViveTrackerSelectionTarget>().SetSelectionMode(_isSelectingTracker);
@@ -64,7 +77,7 @@ public class ViveTrackerSelector : MonoBehaviour {
 			_pointer.SetActive(false);
 			// Literally copied and pasted from the thing above -.-
 			GetComponent<ViveStrokeReader>().IsSelectorMode = false;
-			foreach (GameObject target in _targets) {
+			foreach (GameObject target in Targets) {
 				if (target.tag == "TargetLayer") {
 					target.GetComponent<ViveTrackerSelectionTarget>().SetSelectionMode(_isSelectingTracker);
 				} else if (target.tag == "TargetVisibility") {
@@ -103,7 +116,7 @@ public class ViveTrackerSelector : MonoBehaviour {
 			}
 
 			// Loop through potential targets and set proper mat
-			foreach (GameObject target in _targets) {
+			foreach (GameObject target in Targets) {
 				if (target.GetInstanceID() == targetId) {
 					if (selectPressed) {
 						// Here we need to set the proper target
