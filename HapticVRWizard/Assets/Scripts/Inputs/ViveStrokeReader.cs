@@ -13,7 +13,7 @@ public class ViveStrokeReader : MonoBehaviour {
     private float _pressTime = 0f;
     private const float LONG_PRESS_TIME = 1.2f;
 
-    private float _radiusScale = 1.0f;
+    private float _radiusScale = 0.15f;
     private float _defaultScale = 0.02f;
     private float _currentRadius = 0.02f;
 

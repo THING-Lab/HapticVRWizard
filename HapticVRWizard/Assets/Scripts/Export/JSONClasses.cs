@@ -28,6 +28,9 @@ public class SceneMetadata {
   public string type = "Object";
   public string generator = "Object3D.toJSON";
   public string deviceId = null;
+  // Layer vis objects go here
+  // [{ layerId: 0, visible: true }]
+  // On loading in demo only load visible layers
 }
 
 [System.Serializable]
@@ -45,9 +48,9 @@ public class SceneObject {
 [System.Serializable]
 public class ObjectData {
 	public string uuid = "E7B44C44-DD75-4C29-B571-21AD6AEF0CA9";
-  public string name = "Temp Name";
-  public string type = "Mesh";
-  public string geometry = "";
+	public string name = "Temp Name";
+	public string type = "Mesh";
+	public string geometry = "";
 
 	public ObjectData(string geoId) {
 		geometry = geoId;
@@ -76,6 +79,7 @@ public class GeometryMetadata {
 	public string type = "BufferGeometry";
 	public string generator = "BufferGeometry.toJSON";
 	public string mat = "ShadedWhite";
+	// Layer Id goes here
 
 	public GeometryMetadata(string meshMat) {
 		mat = meshMat;
