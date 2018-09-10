@@ -10,6 +10,10 @@ TagManager:
   - NotExportable
   - TubeStroke
   - RibbonStroke
+  - TargetVisibility
+  - TargetLayer
+  - DrawElement
+  - DrawParent
   layers:
   - Default
   - TransparentFX
@@ -19,7 +23,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - Tracker Select
   - 
   - 
   - 

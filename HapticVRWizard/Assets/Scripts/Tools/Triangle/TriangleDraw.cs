@@ -4,19 +4,42 @@ using UnityEngine;
 
 public class TriangleDraw : StrokeDraw {
 	private bool _isSettingPoint = false;
-	private int[] prevVerts = { 0, 1 };
-	private int[] nextPrevVerts = { 0, 1 };
-	private int windingCheck = 1;
+	private List<Vector3> _redoPoints;
+	private GameObject _segmentPreview;
 	public bool IsSettingPoint {
 		get { return _isSettingPoint; }
 		set { _isSettingPoint = value; }
 	}
 
+	private LineRenderer PreviewLine {
+		get { return _segmentPreview.GetComponent<LineRenderer>(); }
+	}
+
+	void Start() {
+		// Only used for preview
+		_segmentPreview = new GameObject();
+		_segmentPreview.AddComponent<LineRenderer>();
+		PreviewLine.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
+		PreviewLine.startWidth = 0.003f;
+		PreviewLine.endWidth = 0.003f;
+		_segmentPreview.SetActive(false);
+	}
+
+	public void SetMaterial(Material mat) {
+		gameObject.GetComponent<Renderer>().material = mat;
+		// PreviewLine.material = mat;
+		PreviewLine.startColor = mat.color;
+		PreviewLine.endColor = mat.color;
+	}
+
+	public override void Reset() {
+		base.Reset();
+		_isSettingPoint = false;
+	}
+
 	public void UpdateCurrentPoint(Vector3 p) {
 		if (!_isSettingPoint) {
 			_isSettingPoint = true;
-			prevVerts[0] = nextPrevVerts[0];
-			prevVerts[1] = nextPrevVerts[1];
 			AddPoint(p, Quaternion.identity, 1f);
 		} else {
 			_pointsList[_pointsList.Count - 1] = p;
@@ -24,41 +47,81 @@ public class TriangleDraw : StrokeDraw {
 			// Make the added vectors consts?
 			_verts[_verts.Count - 1] = p + new Vector3(0f, -0.001f, 0f);
 
-			recalucalteTris();
+			RecalucalteTris();
 		}
 
 		UpdateMesh();
 	}
 
-	private void recalucalteTris() {
+	private void SetTriVerts(int frontB, int frontC, int backB, int backC) {
+		// first vert should be set properly
+		_tris[_tris.Count - 5] = frontB;
+		_tris[_tris.Count - 4] = frontC;
+
+		_tris[_tris.Count - 2] = backB;
+		_tris[_tris.Count - 1] = backC;
+	}
+
+	private void RecalucalteTris() {
+		// Set the preview or something
+		if (_pointsList.Count == 1) {
+			_segmentPreview.SetActive(false);
+			PreviewLine.SetPosition(0, _pointsList[0]);
+		} else if (_pointsList.Count == 2) {
+			_segmentPreview.SetActive(true);
+			PreviewLine.SetPosition(1, _pointsList[1]);
+		}
+
 		if (_pointsList.Count > 3) {
+			_segmentPreview.SetActive(false);
 			// This is the magic
-			int currentVert = _pointsList.Count - 1;
+			int prevFirstVert = _tris.Count - 12;
+			int currentVert = _verts.Count - 2;
+			int[] prevTri = { _tris[prevFirstVert], _tris[prevFirstVert + 1], _tris[prevFirstVert + 2] };
+			// Debug.Log(_tris[prevFirstVert] + " " + _tris[prevFirstVert + 2] + " " + _tris[prevFirstVert + 4]);
+			int[] prevBackTri = { _tris[prevFirstVert + 3], _tris[prevFirstVert + 4], _tris[prevFirstVert + 5] };
 
-			Vector3 triASideA = _pointsList[prevVerts[0]] - _pointsList[nextPrevVerts[0]];
-			Vector3 triASideB = _pointsList[prevVerts[1]] - _pointsList[nextPrevVerts[0]];
-			Vector3 triANormal = Vector3.Cross(triASideA, triASideB).normalized;
+			bool prevIsABC = (prevTri[0] > prevTri[1] && prevTri[1] > prevTri[2]);
 
-			Vector3 triBSideA = _pointsList[nextPrevVerts[0]] - _pointsList[currentVert];
-			Vector3 triBSideB = _pointsList[prevVerts[1]] - _pointsList[currentVert];
-			Vector3 triBNormal = Vector3.Cross(triBSideA, triBSideB).normalized;
+			Vector3 triANormal = Vector3.zero;
+			Vector3 triBNormal = Vector3.zero;
+			if (prevIsABC) {
+				Vector3 triASideA = _verts[prevTri[1]] - _verts[prevTri[0]];
+				Vector3 triASideB = _verts[prevTri[2]] - _verts[prevTri[0]];
+				triANormal = Vector3.Cross(triASideA, triASideB).normalized;
 
-			if (Vector3.Dot(triANormal, triBNormal) > 0) {
-				nextPrevVerts[1] = prevVerts[1];
-				windingCheck = (windingCheck + 1) % 2;
+				Vector3 triBSideA = _verts[prevTri[0]] - _verts[currentVert];
+				Vector3 triBSideB = _verts[prevTri[2]] - _verts[currentVert];
+				triBNormal = Vector3.Cross(triBSideA, triBSideB).normalized;
 			} else {
-				nextPrevVerts[1] = prevVerts[0];
+				Vector3 triASideA = _verts[prevTri[2]] - _verts[prevTri[0]];
+				Vector3 triASideB = _verts[prevTri[1]] - _verts[prevTri[0]];
+				triANormal = Vector3.Cross(triASideA, triASideB).normalized;
+
+				Vector3 triBSideA = _verts[prevTri[0]] - _verts[currentVert];
+				Vector3 triBSideB = _verts[prevTri[1]] - _verts[currentVert];
+				triBNormal = Vector3.Cross(triBSideA, triBSideB).normalized;
 			}
+
+			// Flip!
+			bool isFlip = (Vector3.Dot(triANormal, triBNormal) > 0);
 			
-			// Need to flip winding order
-			// I can't think of a cleaner way to do this right now, I'm very sorry
-			if (_pointsList.Count % 2 == 1) {
-				_tris[_tris.Count - 6] = (nextPrevVerts[1] * 2);
-				_tris[_tris.Count - 1] = (nextPrevVerts[1] * 2 + 1);
+			// Do I need to know if the previous one is flipped
+			if (prevIsABC) {
+				if (isFlip) {
+					SetTriVerts(prevTri[0], prevTri[2], prevBackTri[1], prevBackTri[0]);
+				} else {
+					SetTriVerts(prevTri[1], prevTri[0], prevBackTri[0], prevBackTri[2]);
+				}
 			} else {
-				_tris[_tris.Count - 4] = (nextPrevVerts[1] * 2);
-				_tris[_tris.Count - 3] = (nextPrevVerts[1] * 2 + 1);
+				if (isFlip) {
+					SetTriVerts(prevTri[1], prevTri[0], prevBackTri[0], prevBackTri[2]);
+				} else {
+					SetTriVerts(prevTri[0], prevTri[2], prevBackTri[1], prevBackTri[0]);
+				}
 			}
+			// Debug.Log(_verts.Count);
+			// Debug.Log(_tris[_tris.Count - 6] + " " + _tris[_tris.Count - 4] + " " + _tris[_tris.Count - 2]);
 		}
 	}
 
@@ -75,44 +138,17 @@ public class TriangleDraw : StrokeDraw {
 		_uvs.Add(new Vector2(0, 0));
 		_uvs.Add(new Vector2(0, 0));
 
-		if (_pointsList.Count == 3) {
-			_tris.Add(_verts.Count - 6);
-			_tris.Add(_verts.Count - 4);
+		// Important that the first vert added is always the newest one
+		if (_pointsList.Count >= 3) {
+			// A B C order
 			_tris.Add(_verts.Count - 2);
+			_tris.Add(_verts.Count - 4);
+			_tris.Add(_verts.Count - 6);
 
+			// A C B order
 			_tris.Add(_verts.Count - 1);
-			_tris.Add(_verts.Count - 3);
 			_tris.Add(_verts.Count - 5);
-		}
-
-		// Only start generating faces once we have 3 points
-		if (_pointsList.Count > 3) {
-			// This is the magic
-			int currentVert = _pointsList.Count - 1;
-			nextPrevVerts[0] = _pointsList.Count - 2;
-			// 1, 2, 3 = 2, 4, 6 : n * 2
-			// 0, 1, 2 = 1, 3, 5 : n * 2 + 1
-
-			nextPrevVerts[1] = _pointsList.Count - 3;
-			// Need to flip winding order
-			// I can't think of a cleaner way to do this right now, I'm very sorry
-			if (_pointsList.Count % 2 == 1) {
-				_tris.Add(nextPrevVerts[1] * 2);
-				_tris.Add(nextPrevVerts[0] * 2);
-				_tris.Add(currentVert * 2);
-
-				_tris.Add(currentVert * 2 + 1);
-				_tris.Add(nextPrevVerts[0] * 2 + 1);
-				_tris.Add(nextPrevVerts[1] * 2 + 1);
-			} else {
-				_tris.Add(currentVert * 2);
-				_tris.Add(nextPrevVerts[0] * 2);
-				_tris.Add(nextPrevVerts[1] * 2);
-
-				_tris.Add(nextPrevVerts[1] * 2 + 1);
-				_tris.Add(nextPrevVerts[0] * 2 + 1);
-				_tris.Add(currentVert * 2 + 1);
-			}
+			_tris.Add(_verts.Count - 3);
 		}
 	}
 }

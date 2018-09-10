@@ -6,9 +6,21 @@ using System.Text;
 using UnityEngine;
 
 public class JSONExportManager : MonoBehaviour {
-	public List<GameObject> _drawParents;
+	public GameObject _drawRoot;
 	// Make this a generic mesh loader
 	public TubeTool _tubeLoader;
+	private List<GameObject> DrawParents {
+		get {
+			List<GameObject> parents = new List<GameObject>();
+			foreach (Transform parent in _drawRoot.transform) {
+				if (parent.tag == "DrawParent") {
+					parents.Add(parent.gameObject);
+				}
+			}
+
+			return parents;
+		}
+	}
 
 	public void SaveScene() {
 		// get all mesh groups and generate file names
@@ -21,18 +33,25 @@ public class JSONExportManager : MonoBehaviour {
 		Directory.CreateDirectory(folderName);
 		
 		// For loop here
-		foreach (GameObject drawing in _drawParents) {
-			string fileName = folderName + "/" + drawing.name + ".json";
+		foreach(GameObject drawParent in DrawParents) {
+			string fileName = folderName + "/" + drawParent.name + ".json";
 			List<GameObject> children = new List<GameObject>();
 
-			foreach (Transform child in drawing.transform) {
-				if (child.gameObject.tag != "NotExportable") {
-					children.Add(child.gameObject);
+			// Find all drawyings, ignore their layers
+			// Not saving layers ATM, this ain't photoshop
+			foreach(StrokeDraw stroke in drawParent.GetComponentsInChildren<StrokeDraw>()) {
+				if (stroke.gameObject.tag == "DrawElement") {
+					children.Add(stroke.gameObject);
 				}
 			}
 
 			if (children.Count > 0) {
-				ExportMeshes(children, fileName);
+				string deviceId = "untracked";
+				if (drawParent.GetComponent<TrackerIdGet>() != null) {
+					deviceId = drawParent.GetComponent<TrackerIdGet>().DeviceID;
+				}
+
+				ExportMeshes(children, fileName, deviceId);
 			}
 		}
 	}
@@ -52,19 +71,20 @@ public class JSONExportManager : MonoBehaviour {
 			.First()
 			.GetFiles("*.json");
 		
+		// This doesn't handle for if the parent doesn't exist :/
 		foreach (FileInfo file in drawFiles) {
-			Scene scene = ReadFromFile(file.FullName);
+			JsonScene scene = ReadFromFile(file.FullName);
 			_tubeLoader.ImportDrawing(
 				scene,
-				_drawParents.Find(o => o.name == file.Name.Replace(".json", "")).transform
+				DrawParents.Find(o => o.name == file.Name.Replace(".json", "")).transform
 			);
 		}
 	}
-	public void ExportMeshes(List<GameObject> objects, string filename) {
+	public void ExportMeshes(List<GameObject> objects, string filename, string trackerId) {
 		// string fileName = EditorUtility.SaveFilePanel("Export .obj file", "", meshName, "obj");
 		// string fileName = Application.dataPath + "/" + gameObject.name + ".obj"; // you can also use: "/storage/sdcard1/" +gameObject.
 
-		Scene currentScene = new Scene();
+		JsonScene currentScene = new JsonScene(trackerId);
 		foreach(GameObject geo in objects) {
 			currentScene.AddGeometry(geo.transform);
 		}
@@ -80,8 +100,8 @@ public class JSONExportManager : MonoBehaviour {
 		}
 	}
 
-	public Scene ReadFromFile(string filename) {
+	public JsonScene ReadFromFile(string filename) {
 		string sceneText = File.ReadAllText(filename).Replace("object", "sceneObject");
-		return JsonUtility.FromJson<Scene>(sceneText);
+		return JsonUtility.FromJson<JsonScene>(sceneText);
 	}
 }

@@ -56,7 +56,7 @@ public abstract class StrokeDraw : MonoBehaviour {
 		_meshFilter.mesh = _mesh;
 	}
 
-	public void Reset() {
+	public virtual void Reset() {
 		_pointsList = new List<Vector3>();
 		_verts = new List<Vector3>();
 		_tris = new List<int>();

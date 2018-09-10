@@ -19,7 +19,7 @@ public class ViveSketchCameraController : MonoBehaviour {
 	void Update () {
 		if (Controller.GetHairTriggerDown()) {
             _isTriggerHeld = true;
-			_sketchCamera.transform.position = transform.position;
+			// _sketchCamera.transform.position = transform.position;
         }
 
         if (Controller.GetHairTriggerUp()) {
@@ -27,7 +27,9 @@ public class ViveSketchCameraController : MonoBehaviour {
         }
 
 		if (_isTriggerHeld) {
-			_sketchCamera.transform.LookAt(transform.position);
+			// _sketchCamera.transform.LookAt(transform.position);
+			_sketchCamera.transform.position = transform.position;
+			_sketchCamera.transform.rotation = transform.rotation;
 		}
 	}
 }

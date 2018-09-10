@@ -46,12 +46,12 @@ public class TubeTool : MonoBehaviour, ITool {
 	}
 
 	// I should move some of this to the TubeDraw script probably
-	public void ImportDrawing(Scene drawing, Transform parent) {
+	public void ImportDrawing(JsonScene drawing, Transform parent) {
 		foreach(Geometry geo in drawing.geometries) {
 			GameObject newTube = (GameObject)Instantiate(_tube);
 			newTube.transform.SetParent(parent, false);
 			// Some ugly long way to load a material
-			newTube.GetComponent<Renderer>().material = _tools.GetLoadedMat(geo.data.attributes.mat);
+			newTube.GetComponent<Renderer>().material = _tools.GetLoadedMat(geo.metadata.mat);
 			_allTubes.Add(newTube);
 			_allTubes.Last().GetComponent<TubeDraw>().LoadMesh(geo);
 		}

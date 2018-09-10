@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Might need to namespace this :/
 [System.Serializable]
-public class Scene {
+public class JsonScene {
 	public SceneMetadata metadata = new SceneMetadata();
 	public List<Geometry> geometries = new List<Geometry>();
 	public SceneObject sceneObject = new SceneObject();
+
+	public JsonScene(string dId) {
+		metadata.deviceId = dId;
+	}
 
 	public void AddGeometry(Transform t) {
 		string uuid = System.Guid.NewGuid().ToString();
@@ -22,6 +27,10 @@ public class SceneMetadata {
   public double version = 4.5;
   public string type = "Object";
   public string generator = "Object3D.toJSON";
+  public string deviceId = null;
+  // Layer vis objects go here
+  // [{ layerId: 0, visible: true }]
+  // On loading in demo only load visible layers
 }
 
 [System.Serializable]
@@ -39,9 +48,9 @@ public class SceneObject {
 [System.Serializable]
 public class ObjectData {
 	public string uuid = "E7B44C44-DD75-4C29-B571-21AD6AEF0CA9";
-  public string name = "Temp Name";
-  public string type = "Mesh";
-  public string geometry = "";
+	public string name = "Temp Name";
+	public string type = "Mesh";
+	public string geometry = "";
 
 	public ObjectData(string geoId) {
 		geometry = geoId;
@@ -50,14 +59,17 @@ public class ObjectData {
 
 [System.Serializable]
 public class Geometry {
-	public GeometryMetadata metadata = new GeometryMetadata();
+	public GeometryMetadata metadata;
 	public string uuid =  "";
-  public string type = "BufferGeometry";
+  	public string type = "BufferGeometry";
 	public GeometryData data = new GeometryData();
 
 	public Geometry(Transform t, string id) {
 		data.attributes.SetAttributes(t);
 		uuid = id;
+	
+		string mat = t.GetComponent<Renderer>().material.name.Split(' ')[0];
+		metadata = new GeometryMetadata(mat);
 	}
 }
 
@@ -66,6 +78,12 @@ public class GeometryMetadata {
 	public double version = 4.5;
 	public string type = "BufferGeometry";
 	public string generator = "BufferGeometry.toJSON";
+	public string mat = "ShadedWhite";
+	// Layer Id goes here
+
+	public GeometryMetadata(string meshMat) {
+		mat = meshMat;
+	}
 }
 
 [System.Serializable]
@@ -78,13 +96,8 @@ public class GeometryAttrs {
 	public GeometryAttribute position = new GeometryAttribute();
 	public GeometryAttribute normal = new GeometryAttribute();
 	public GeometryAttribute uvs = new GeometryAttribute();
-	public string mat = "ShadedWhite";
 
 	public void SetAttributes(Transform t) {
-		// Hack bc material name has instance in it :/
-		mat = t.GetComponent<Renderer>().material.name.Split(' ')[0];
-		Debug.Log(mat);
-
 		uvs.itemSize = 2;
 		MeshFilter mf = t.GetComponent<MeshFilter>();
 		Mesh m = mf.sharedMesh;

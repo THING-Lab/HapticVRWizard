@@ -21,7 +21,7 @@ public class TriangleTool : MonoBehaviour, ITool {
 	// Maybe reset tube? or pass color info
 	public void StartStroke(Transform parent, Material mat) {
 		_preview.transform.SetParent(parent, false);
-		_preview.GetComponent<Renderer>().material = mat;
+		_preview.SetMaterial(mat);
 	}
 
 	public void UpdateStroke(Vector3 point, Quaternion rotation, float scale) {
