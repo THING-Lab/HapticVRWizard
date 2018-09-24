@@ -7,7 +7,8 @@ public class TubeDraw : StrokeDraw {
 	private int _numSegments = 10;
 
 	// Should match min move distance
-	public float _meshTailLength = 0.03f;
+	public float _maxTailLength = 0.03f;
+	public float _minTailLength = 0.003f;
 
 	private Vector3 _prevNormal;
 
@@ -103,7 +104,7 @@ public class TubeDraw : StrokeDraw {
 
 			// Add mesh end cap
 			if (_pointsList.Count > 2) {
-				CloseMesh();
+				CloseMesh(scale);
 			}
 
 			UpdateMesh();
@@ -127,11 +128,14 @@ public class TubeDraw : StrokeDraw {
 
 	// Create closing cap for mesh
 	// Might want to do this in a more nuanced way instead of just creating another ring
-	public void CloseMesh() {
+	public void CloseMesh(float scale) {
 		if (_pointsList.Count > 1) {
 			Vector3 ringNormal = Vector3.zero;
 			Vector3 direction = _pointsList.Last() - _pointsList[_pointsList.Count - 2];
-			Vector3 scaledEndDelta = Vector3.Scale(direction.normalized, new Vector3(_meshTailLength, _meshTailLength, _meshTailLength));
+
+			float tailLength = (scale - 0.003f) / (0.13f - 0.003f) * (_maxTailLength - _minTailLength) + _minTailLength;
+			Vector3 tailSize = new Vector3(tailLength, tailLength, tailLength);
+			Vector3 scaledEndDelta = Vector3.Scale(direction.normalized, tailSize);
 			Vector3 endPoint = _pointsList.Last() + scaledEndDelta;
 
 			AddVertexRing(_pointsList.Count * _numSegments, endPoint, endPoint, ringNormal, 0);

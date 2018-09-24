@@ -14,6 +14,7 @@ TagManager:
   - TargetLayer
   - DrawElement
   - DrawParent
+  - DrawLayer
   layers:
   - Default
   - TransparentFX

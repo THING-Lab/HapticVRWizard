@@ -10,6 +10,8 @@ public class ViveTrackerSelector : MonoBehaviour {
 	public Color _color;
 	private GameObject _pointer;
 	private bool _isSelectingTracker = false;
+	private bool _isNearTracker = false;
+	private ViveTrackerSelectionTarget _nearTracker;
 	public bool IsSelectingTracker {
 		get { return _isSelectingTracker; }
 	}
@@ -54,9 +56,44 @@ public class ViveTrackerSelector : MonoBehaviour {
 		pointerMat.SetColor("_Color", _color);
 		_pointer.GetComponent<MeshRenderer>().material = pointerMat;
 	}
+
+	// Not sure if this is the right way to do it, I think I'd prefer to do it all in the update
+	void OnCollisionEnter(Collision newTarget) {
+		// Debug.Log(newTarget.gameObject.tag);
+		Debug.Log("collide");
+		// if (newTarget.gameObject.tag == "DrawLayer") {
+		// 	_isNearTracker = true;
+		// 	_nearTracker = newTarget.GetComponent<ViveTrackerSelectionTarget>();
+		// }
+	}
+
+	void OnTiggerEnter(Collider newTarget) {
+		Debug.Log("collide");
+	}
+ 
+	void OnTriggerExit(Collider oldTarget) {
+		if (oldTarget.gameObject.GetInstanceID() == _nearTracker.gameObject.GetInstanceID()) {
+			_isNearTracker = true;
+		}
+	}
 	
 	// Update is called once per frame
 	void Update () {
+		if (Controller.GetPressDown(EVRButtonId.k_EButton_SteamVR_Touchpad)) {
+			Debug.Log("pad");
+		}
+		// Simple layer select
+		if (Controller.GetPressDown(EVRButtonId.k_EButton_SteamVR_Touchpad) && _isNearTracker) {
+			GetComponent<ViveStrokeReader>().DrawParent = _nearTracker.selectionParent;
+			_nearTracker.IsSelected = true;
+
+			// Reset targets
+			foreach (GameObject target in Targets) {
+				if (target.GetInstanceID() != _nearTracker.gameObject.GetInstanceID())
+					target.GetComponent<ViveTrackerSelectionTarget>().IsSelected = false;
+			}
+		}
+
 		// Get grip press
 		if(Controller.GetPressDown(EVRButtonId.k_EButton_Grip)) {
 			_isSelectingTracker = true;
