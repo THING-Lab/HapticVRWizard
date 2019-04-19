@@ -1,0 +1,36 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class BrushCommand : ICommand
+{
+    
+	private string _id;
+	private List<Vector3> _verts;
+	private List<Vector2> _uvs;
+	private List<int> _tris;
+	private BrushTool _tool;
+	private Transform _parent;
+	private Material _mat;
+
+	public string Id { get { return _id; } }
+
+	public BrushCommand(string id, BrushTool tool, List<Vector3> verts, List<int> tris, List<Vector2> uvs, Transform parent, Material mat) {
+		_id = id;
+		_tool = tool;
+		_verts = verts;
+		_tris = tris;
+		_uvs = uvs;
+		_parent = parent;
+		_mat = new Material(mat);;
+	}
+
+	public void Undo() {
+		_tool.RemoveBrush(_id);
+	}
+
+	public void Execute() {
+		_tool.AddBrush(_id, _verts, _tris, _uvs, _parent, _mat);
+	}
+}
+

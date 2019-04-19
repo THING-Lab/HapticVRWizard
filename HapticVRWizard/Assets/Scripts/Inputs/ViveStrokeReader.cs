@@ -20,6 +20,7 @@ public class ViveStrokeReader : MonoBehaviour {
     // Hack to allow for a new position on first
     private Vector3 _lastPos = new Vector3(-1000, -1000, -1000);
     public GameObject _cursor;
+    public GameObject _model;
     public ToolManager _toolManager;
     private int _drawParentId;
 
@@ -101,7 +102,7 @@ public class ViveStrokeReader : MonoBehaviour {
         {
             // Might wanna do this less
             _cursor.SetActive(!(_isPointerMode || _isSelectorMode));
-
+            _model.SetActive(_isPointerMode || _isSelectorMode);
             // Only start drawing if not pointing at menu
             if (SteamVR_Actions._default.GrabPinch.GetStateDown(SteamVR_Input_Sources.RightHand) && CanDraw)
             {
