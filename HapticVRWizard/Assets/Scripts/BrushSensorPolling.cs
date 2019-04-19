@@ -18,6 +18,9 @@ public class BrushSensorPolling : MonoBehaviour
     public SerialController serialController;
 
     public GameObject Brush, bristle_A, bristle_B, bristle_C, bristle_D, bristle_E, bristle_F;
+
+    public static bool[] IsBristleBent;
+    public bool[] test;
     
     private int [] bristleCalibrationBend = {600, 600, 600, 600, 600, 600 };
     private int [] currentBristleBend = { 600, 600, 600, 600, 600, 600 };
@@ -44,6 +47,11 @@ public class BrushSensorPolling : MonoBehaviour
         
         if(Brush == null)
             Debug.Log("Brush Not Found!");
+           
+       IsBristleBent = new bool[5];
+       test = new bool[5];
+      
+        
     }
 
     // Executed each frame
@@ -144,6 +152,14 @@ public class BrushSensorPolling : MonoBehaviour
             else{
 
                 float angle = backBend(i); 
+            if(angle > 5 || angle < -5){
+                IsBristleBent[i] = true;
+                test[i] = true;
+            }
+            else{
+                 IsBristleBent[i] = false;
+                test[i] = false;
+            }
             //Rotates around parent pivot location Bristle_XP
             bristle.transform.parent.localRotation = Quaternion.Euler(new Vector3(0, angle, 0));
            
@@ -172,6 +188,7 @@ public class BrushSensorPolling : MonoBehaviour
         {
              bend = neighborBend;
         }
+       
 
         return bend;
     }

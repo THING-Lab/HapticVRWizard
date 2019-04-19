@@ -13,6 +13,8 @@ public class ToolManager : MonoBehaviour {
     private bool _isMidTriangle = false;
     public enum ToolTypes { Ribbon, Tube, Triangle, Brush };
 
+    public static bool isBrushTool;
+
     public string _defaultMat;
     public string _defaultColor;
 
@@ -77,6 +79,7 @@ public class ToolManager : MonoBehaviour {
 
     public void SetBrush(ToolTypes brushId)
     {
+        isBrushTool = false;
         if ((ToolTypes)brushId == ToolTypes.Tube)
         {
             _currentTool = _tubeTool;
@@ -92,6 +95,7 @@ public class ToolManager : MonoBehaviour {
         else if ((ToolTypes)brushId == ToolTypes.Brush)
         {
             _currentTool = _brushTool;
+            isBrushTool = true;
         }
 
         _isMidTriangle = false;

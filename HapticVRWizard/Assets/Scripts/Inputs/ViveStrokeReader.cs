@@ -31,6 +31,7 @@ public class ViveStrokeReader : MonoBehaviour {
         set { _drawParent = value; }
     }
 
+
     //Start Chandan Changes 
 
     //private SteamVR_Controller.Device Controller {
@@ -61,6 +62,7 @@ public class ViveStrokeReader : MonoBehaviour {
     private SteamVR_TrackedObject _trackedObj;
 
     private bool _isPointerMode = false;
+
     public bool IsPointerMode {
         get { return _isPointerMode; }
     }
@@ -73,6 +75,10 @@ public class ViveStrokeReader : MonoBehaviour {
 
     private bool CanDraw {
         get { return (!_isPointerMode && !_isSelectorMode); }
+    } 
+
+    public bool IsBrushTool{
+        get{return (ToolManager.isBrushTool);}
     }
 
     // REPLACE THIS WITH PROPERTY
@@ -106,9 +112,16 @@ public class ViveStrokeReader : MonoBehaviour {
             // Only start drawing if not pointing at menu
             if (SteamVR_Actions._default.GrabPinch.GetStateDown(SteamVR_Input_Sources.RightHand) && CanDraw)
             {
+                if(IsBrushTool && (BrushSensorPolling.IsBristleBent[0] || BrushSensorPolling.IsBristleBent[1] || BrushSensorPolling.IsBristleBent[2] ||
+                 BrushSensorPolling.IsBristleBent[3] || BrushSensorPolling.IsBristleBent[4] || BrushSensorPolling.IsBristleBent[5] )){
+                     _isTriggerHeld = true;
+                    _toolManager.StartStroke(DrawParent);
+                     _pressTime = 0;
+                }else{
                 _isTriggerHeld = true;
                 _toolManager.StartStroke(DrawParent);
                 _pressTime = 0;
+                }
             }
 
             if (SteamVR_Actions._default.GrabPinch.GetStateUp(SteamVR_Input_Sources.RightHand) && _isTriggerHeld)
