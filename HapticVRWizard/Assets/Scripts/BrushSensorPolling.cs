@@ -48,8 +48,8 @@ public class BrushSensorPolling : MonoBehaviour
         if(Brush == null)
             Debug.Log("Brush Not Found!");
            
-       IsBristleBent = new bool[5];
-       test = new bool[5];
+       IsBristleBent = new bool[6];
+       test = new bool[6];
       
         
     }

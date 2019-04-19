@@ -112,11 +112,16 @@ public class ViveStrokeReader : MonoBehaviour {
             // Only start drawing if not pointing at menu
             if (SteamVR_Actions._default.GrabPinch.GetStateDown(SteamVR_Input_Sources.RightHand) && CanDraw)
             {
-                if(IsBrushTool && (BrushSensorPolling.IsBristleBent[0] || BrushSensorPolling.IsBristleBent[1] || BrushSensorPolling.IsBristleBent[2] ||
-                 BrushSensorPolling.IsBristleBent[3] || BrushSensorPolling.IsBristleBent[4] || BrushSensorPolling.IsBristleBent[5] )){
+                if(IsBrushTool){
+                if(BrushSensorPolling.IsBristleBent[0] || BrushSensorPolling.IsBristleBent[1] || BrushSensorPolling.IsBristleBent[2] ||
+                    BrushSensorPolling.IsBristleBent[3] || BrushSensorPolling.IsBristleBent[4] || BrushSensorPolling.IsBristleBent[5]){
                      _isTriggerHeld = true;
                     _toolManager.StartStroke(DrawParent);
                      _pressTime = 0;
+                 }
+                 else{
+                     _isTriggerHeld = false;
+                    }
                 }else{
                 _isTriggerHeld = true;
                 _toolManager.StartStroke(DrawParent);
