@@ -1,35 +1,58 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR;
 
 public class ViveSketchCameraController : MonoBehaviour {
 	public GameObject _sketchCamera;
 	private bool _isTriggerHeld;
 
 	private SteamVR_TrackedObject _trackedObj;
-    private SteamVR_Controller.Device Controller {
-        get { return SteamVR_Controller.Input((int)_trackedObj.index); }
-    }
 
-	void Awake () {
-        _trackedObj = GetComponent<SteamVR_TrackedObject>();
-    }
-	
-	// Update is called once per frame
-	void Update () {
-		if (Controller.GetHairTriggerDown()) {
-            _isTriggerHeld = true;
-			// _sketchCamera.transform.position = transform.position;
+    void Awake()
+    {
+        try
+        {
+            _trackedObj = GetComponent<SteamVR_TrackedObject>();
         }
 
-        if (Controller.GetHairTriggerUp()) {
-            _isTriggerHeld = false;
+        catch (Exception e)
+        {
+            Debug.Log("!!!!!!!Exception occured!!!!!!!");
+            Debug.LogException(e, this);
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        try
+        {
+            //Trigger press
+            if (SteamVR_Actions._default.GrabPinch.GetStateDown(SteamVR_Input_Sources.Any))
+            {
+                _isTriggerHeld = true;
+                // _sketchCamera.transform.position = transform.position;
+            }
+
+            //Trigger depress
+            if (SteamVR_Actions._default.GrabPinch.GetStateUp(SteamVR_Input_Sources.Any))
+            {
+                _isTriggerHeld = false;
+            }
+
+            if (_isTriggerHeld)
+            {
+                // _sketchCamera.transform.LookAt(transform.position);
+                _sketchCamera.transform.position = transform.position;
+                _sketchCamera.transform.rotation = transform.rotation;
+            }
         }
 
-		if (_isTriggerHeld) {
-			// _sketchCamera.transform.LookAt(transform.position);
-			_sketchCamera.transform.position = transform.position;
-			_sketchCamera.transform.rotation = transform.rotation;
-		}
-	}
+        catch (Exception e)
+        {
+            Debug.Log("!!!!!!!Exception occured!!!!!!!");
+            Debug.LogException(e, this);
+        }
+    }
 }

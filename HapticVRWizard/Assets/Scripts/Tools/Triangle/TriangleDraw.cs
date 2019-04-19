@@ -19,7 +19,7 @@ public class TriangleDraw : StrokeDraw {
 		// Only used for preview
 		_segmentPreview = new GameObject();
 		_segmentPreview.AddComponent<LineRenderer>();
-		PreviewLine.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
+		// PreviewLine.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
 		PreviewLine.startWidth = 0.003f;
 		PreviewLine.endWidth = 0.003f;
 		_segmentPreview.SetActive(false);

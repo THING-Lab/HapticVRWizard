@@ -1,0 +1,16 @@
+{
+  "source": "Unity",
+  "applications": [
+    {
+      "app_key": "application.generated.unity.hapticvrwizard.exe",
+      "launch_type": "url",
+      "url": "steam://launch/",
+      "action_manifest_path": "E:\\Chandan\\Haptic VR Wizard\\Workspace\\HapticVRWizard-master (Script changes for Steam VR 2.0)\\HapticVRWizard\\actions.json",
+      "strings": {
+        "en_us": {
+          "name": "HapticVRWizard [Testing]"
+        }
+      }
+    }
+  ]
+}

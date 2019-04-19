@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -17,9 +17,6 @@ public class ViveTrackerSelector : MonoBehaviour {
 	private int _trackerLayerMask = (1 << 8);
 
 	private SteamVR_TrackedObject _trackedObj;
-	private SteamVR_Controller.Device Controller {
-        get { return SteamVR_Controller.Input((int)_trackedObj.index); }
-    }
 
 	private List<GameObject> Targets {
 		get {
@@ -34,112 +31,159 @@ public class ViveTrackerSelector : MonoBehaviour {
 		}
 	}
 
-	// Use this for initialization
-	void Start () {
-		_trackedObj = GetComponent<SteamVR_TrackedObject>();
-		
-		// MAYBE create some prefabs for these
-		// Create laser ray visualization mesh
-		// This is probs a silly way to do things, maybe just do a GL line or something
-		_pointer = GameObject.CreatePrimitive(PrimitiveType.Cube);
-		_pointer.transform.SetParent(transform, false);
-		_pointer.transform.localScale = new Vector3(_thickness, _thickness, 100.0f);
-		_pointer.transform.localPosition = new Vector3(0.0f, 0.0f, 50.0f);
-		_pointer.SetActive(false);
-		Object.DestroyImmediate(_pointer.GetComponent<BoxCollider>());
+    // Use this for initialization
+    void Start()
+    {
+        try
+        {
+            _trackedObj = GetComponent<SteamVR_TrackedObject>();
 
-		// Just create a real mat
-		// The color here doesn't work at all
-		Material pointerMat = new Material(Shader.Find("Unlit/Texture"));
-		pointerMat.SetColor("_Color", _color);
-		_pointer.GetComponent<MeshRenderer>().material = pointerMat;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		// Get grip press
-		if(Controller.GetPressDown(EVRButtonId.k_EButton_Grip)) {
-			_isSelectingTracker = true;
-			_pointer.SetActive(true);
-			GetComponent<ViveStrokeReader>().IsSelectorMode = true;
-			foreach (GameObject target in Targets) {
-				// Using an interface here could cut a couple lines
-				if (target.tag == "TargetLayer") {
-					target.GetComponent<ViveTrackerSelectionTarget>().SetSelectionMode(_isSelectingTracker);
-				} else if (target.tag == "TargetVisibility") {
-					target.GetComponent<ViveTrackerLayerVisibilityTarget>().SetSelectionMode(_isSelectingTracker);
-				}
-			}
-		}
+            // MAYBE create some prefabs for these
+            // Create laser ray visualization mesh
+            // This is probs a silly way to do things, maybe just do a GL line or something
+            _pointer = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            _pointer.transform.SetParent(transform, false);
+            _pointer.transform.localScale = new Vector3(_thickness, _thickness, 100.0f);
+            _pointer.transform.localPosition = new Vector3(0.0f, 0.0f, 50.0f);
+            _pointer.SetActive(false);
+            UnityEngine.Object.DestroyImmediate(_pointer.GetComponent<BoxCollider>());
 
-		if (Controller.GetPressUp(EVRButtonId.k_EButton_Grip)) {
-			_isSelectingTracker = false;
-			_pointer.SetActive(false);
-			// Literally copied and pasted from the thing above -.-
-			GetComponent<ViveStrokeReader>().IsSelectorMode = false;
-			foreach (GameObject target in Targets) {
-				if (target.tag == "TargetLayer") {
-					target.GetComponent<ViveTrackerSelectionTarget>().SetSelectionMode(_isSelectingTracker);
-				} else if (target.tag == "TargetVisibility") {
-					target.GetComponent<ViveTrackerLayerVisibilityTarget>().SetSelectionMode(_isSelectingTracker);
-				}
-			}
-		}
+            // Just create a real mat
+            // The color here doesn't work at all
+            Material pointerMat = new Material(Shader.Find("Unlit/Texture"));
+            pointerMat.SetColor("_Color", _color);
+            _pointer.GetComponent<MeshRenderer>().material = pointerMat;
+        }
 
-		int targetId = 0;
-		bool selectPressed = false;
+        catch (Exception e)
+        {
+            Debug.Log("!!!!!!!Exception occured!!!!!!!");
+            Debug.LogException(e, this);
+        }
+    }
 
-		if (_isSelectingTracker) {
-			Vector3 rayPos = transform.position + new Vector3(0f, 0f, 0f);
-			Vector3 rayDirection = new Vector3(0f, -5f, 1f).normalized;
+    // Update is called once per frame
+    void Update()
+    {
+        try
+        {
+            // Get grip press
+            bool gripPressedDown = SteamVR_Actions._default.GrabGrip.GetStateDown(SteamVR_Input_Sources.Any);
+            if (gripPressedDown)
+            {
+                _isSelectingTracker = true;
+                _pointer.SetActive(true);
+                GetComponent<ViveStrokeReader>().IsSelectorMode = true;
+                foreach (GameObject target in Targets)
+                {
+                    // Using an interface here could cut a couple lines
+                    if (target.tag == "TargetLayer")
+                    {
+                        target.GetComponent<ViveTrackerSelectionTarget>().SetSelectionMode(_isSelectingTracker);
+                    }
+                    else if (target.tag == "TargetVisibility")
+                    {
+                        target.GetComponent<ViveTrackerLayerVisibilityTarget>().SetSelectionMode(_isSelectingTracker);
+                    }
+                }
+            }
 
-			Ray ray = new Ray(rayPos, transform.TransformDirection(Vector3.forward));
-			RaycastHit hitInfo;
+            //if (Controller.GetPressUp(EVRButtonId.k_EButton_Grip))
+            bool gripPressedUp = SteamVR_Actions._default.GrabGrip.GetStateUp(SteamVR_Input_Sources.Any);
+            if (gripPressedUp)
+            {
+                _isSelectingTracker = false;
+                _pointer.SetActive(false);
+                // Literally copied and pasted from the thing above -.-
+                GetComponent<ViveStrokeReader>().IsSelectorMode = false;
+                foreach (GameObject target in Targets)
+                {
+                    if (target.tag == "TargetLayer")
+                    {
+                        target.GetComponent<ViveTrackerSelectionTarget>().SetSelectionMode(_isSelectingTracker);
+                    }
+                    else if (target.tag == "TargetVisibility")
+                    {
+                        target.GetComponent<ViveTrackerLayerVisibilityTarget>().SetSelectionMode(_isSelectingTracker);
+                    }
+                }
+            }
 
-			// Make this not infinity
-			bool hasHit = Physics.Raycast(ray, out hitInfo, Mathf.Infinity, _trackerLayerMask);
-			if (hasHit) {
-				_pointer.transform.localScale = new Vector3(_thickness, _thickness, hitInfo.distance);
-				_pointer.transform.localPosition = new Vector3(0.0f, 0.0f, hitInfo.distance * 0.5f);
+            int targetId = 0;
+            bool selectPressed = false;
 
-				// Set selected id here
-				targetId = hitInfo.collider.gameObject.GetInstanceID();
-			} else {
-				_pointer.transform.localScale = new Vector3(_thickness, _thickness, 100.0f);
-				_pointer.transform.localPosition = new Vector3(0.0f, 0.0f, 50.0f);
-			}
+            if (_isSelectingTracker)
+            {
+                Vector3 rayPos = transform.position + new Vector3(0f, 0f, 0f);
+                Vector3 rayDirection = new Vector3(0f, -5f, 1f).normalized;
 
-			// Trigger pressed
-			if(Controller.GetHairTriggerDown() && hasHit) {
-				// Determine whether the collider is toggle visibility or layer here
-				selectPressed = true;
-			}
+                Ray ray = new Ray(rayPos, transform.TransformDirection(Vector3.forward));
+                RaycastHit hitInfo;
 
-			// Loop through potential targets and set proper mat
-			foreach (GameObject target in Targets) {
-				if (target.GetInstanceID() == targetId) {
-					if (selectPressed) {
-						// Here we need to set the proper target
-						if (target.tag == "TargetLayer") {
-							GetComponent<ViveStrokeReader>().DrawParent = target.GetComponent<ViveTrackerSelectionTarget>().selectionParent;
-							target.GetComponent<ViveTrackerSelectionTarget>().IsSelected = true;
-						}
+                // Make this not infinity
+                bool hasHit = Physics.Raycast(ray, out hitInfo, Mathf.Infinity, _trackerLayerMask);
+                if (hasHit)
+                {
+                    _pointer.transform.localScale = new Vector3(_thickness, _thickness, hitInfo.distance);
+                    _pointer.transform.localPosition = new Vector3(0.0f, 0.0f, hitInfo.distance * 0.5f);
 
-						if (target.tag == "TargetVisibility")
-							target.GetComponent<ViveTrackerLayerVisibilityTarget>().ToggleLayerActive();
-					} else {
-						if (target.tag == "TargetLayer")
-							target.GetComponent<ViveTrackerSelectionTarget>().SetHover(true);
-					}
-				} else {
-					if (selectPressed) {
-						if (target.tag == "TargetLayer")
-							target.GetComponent<ViveTrackerSelectionTarget>().IsSelected = false;
-					}
-					if (target.tag == "TargetLayer")
-						target.GetComponent<ViveTrackerSelectionTarget>().SetHover(false);
-				}
-			}
-		}
-	}
+                    // Set selected id here
+                    targetId = hitInfo.collider.gameObject.GetInstanceID();
+                }
+                else
+                {
+                    _pointer.transform.localScale = new Vector3(_thickness, _thickness, 100.0f);
+                    _pointer.transform.localPosition = new Vector3(0.0f, 0.0f, 50.0f);
+                }
+
+                // Trigger pressed
+                if (SteamVR_Actions._default.GrabPinch.GetStateDown(SteamVR_Input_Sources.Any) && hasHit)
+                {
+                    // Determine whether the collider is toggle visibility or layer here
+                    selectPressed = true;
+                }
+
+                // Loop through potential targets and set proper mat
+                foreach (GameObject target in Targets)
+                {
+                    if (target.GetInstanceID() == targetId)
+                    {
+                        if (selectPressed)
+                        {
+                            // Here we need to set the proper target
+                            if (target.tag == "TargetLayer")
+                            {
+                                GetComponent<ViveStrokeReader>().DrawParent = target.GetComponent<ViveTrackerSelectionTarget>().selectionParent;
+                                target.GetComponent<ViveTrackerSelectionTarget>().IsSelected = true;
+                            }
+
+                            if (target.tag == "TargetVisibility")
+                                target.GetComponent<ViveTrackerLayerVisibilityTarget>().ToggleLayerActive();
+                        }
+                        else
+                        {
+                            if (target.tag == "TargetLayer")
+                                target.GetComponent<ViveTrackerSelectionTarget>().SetHover(true);
+                        }
+                    }
+                    else
+                    {
+                        if (selectPressed)
+                        {
+                            if (target.tag == "TargetLayer")
+                                target.GetComponent<ViveTrackerSelectionTarget>().IsSelected = false;
+                        }
+                        if (target.tag == "TargetLayer")
+                            target.GetComponent<ViveTrackerSelectionTarget>().SetHover(false);
+                    }
+                }
+            }
+        }
+
+        catch (Exception e)
+        {
+            Debug.Log("!!!!!!!Exception occured!!!!!!!");
+            Debug.LogException(e, this);
+        }
+    }
 }

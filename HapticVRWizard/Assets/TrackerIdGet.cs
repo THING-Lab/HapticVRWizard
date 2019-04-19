@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR;
@@ -12,40 +12,54 @@ public class TrackerIdGet : MonoBehaviour {
 		get { return _deviceID; }
 	}
 
-	// Use this for initialization
-	void Awake () {
-		ETrackedPropertyError error = new ETrackedPropertyError();
-		List<string> trackerIds = new List<string>();
+    // Use this for initialization
+    void Awake()
+    {
+        try
+        {
+            ETrackedPropertyError error = new ETrackedPropertyError();
+            List<string> trackerIds = new List<string>();
 
-		for (int i = 0; i < 20; i++) {
-			Valve.VR.ETrackedDeviceClass s = OpenVR.System.GetTrackedDeviceClass((uint)i);
-			StringBuilder build = new StringBuilder();
+            for (int i = 0; i < 20; i++)
+            {
+                Valve.VR.ETrackedDeviceClass s = OpenVR.System.GetTrackedDeviceClass((uint)i);
+                StringBuilder build = new StringBuilder();
 
-			// Open VR function for getting the tracker ID
-			OpenVR.System.GetStringTrackedDeviceProperty(
-				(uint)i,
-				ETrackedDeviceProperty.Prop_SerialNumber_String,
-				build,
-				OpenVR.k_unMaxPropertyStringSize, ref error
-			);
+                // Open VR function for getting the tracker ID
+                OpenVR.System.GetStringTrackedDeviceProperty(
+                    (uint)i,
+                    ETrackedDeviceProperty.Prop_SerialNumber_String,
+                    build,
+                    OpenVR.k_unMaxPropertyStringSize, ref error
+                );
 
-			// Use actual name of class from enum, Might wanna switch to the enum
-			if (s == Valve.VR.ETrackedDeviceClass.GenericTracker) {
-				StringBuilder sb = new StringBuilder();
+                // Use actual name of class from enum, Might wanna switch to the enum
+                if (s == Valve.VR.ETrackedDeviceClass.GenericTracker)
+                {
+                    StringBuilder sb = new StringBuilder();
 
-				// Open VR function for getting the tracker ID
-				OpenVR.System.GetStringTrackedDeviceProperty(
-					(uint)i,
-					ETrackedDeviceProperty.Prop_SerialNumber_String,
-					sb,
-					OpenVR.k_unMaxPropertyStringSize, ref error
-				);
-				trackerIds.Add(sb.ToString());
-			}
-		}
+                    // Open VR function for getting the tracker ID
+                    OpenVR.System.GetStringTrackedDeviceProperty(
+                        (uint)i,
+                        ETrackedDeviceProperty.Prop_SerialNumber_String,
+                        sb,
+                        OpenVR.k_unMaxPropertyStringSize, ref error
+                    );
+                    trackerIds.Add(sb.ToString());
+                }
+            }
 
-		if (_trackerIndex + 1 <= trackerIds.Count) {
-			_deviceID = trackerIds[_trackerIndex];
-		}
-	}
+            if (_trackerIndex + 1 <= trackerIds.Count)
+            {
+                _deviceID = trackerIds[_trackerIndex];
+            }
+        }
+
+        catch (Exception e)
+        {
+            Debug.Log("!!!!!!!Exception occured!!!!!!!");
+            Debug.LogException(e, this);
+        }
+
+    }
 }

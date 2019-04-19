@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -30,10 +30,34 @@ public class ViveStrokeReader : MonoBehaviour {
         set { _drawParent = value; }
     }
 
-    private SteamVR_TrackedObject _trackedObj;
-    private SteamVR_Controller.Device Controller {
-        get { return SteamVR_Controller.Input((int)_trackedObj.index); }
+    //Start Chandan Changes 
+
+    //private SteamVR_Controller.Device Controller {
+    //    get { return SteamVR_Controller.Input((int)_trackedObj.index); }
+    //}
+
+    //public SteamVR_Action_Vector2 TouchpadAction { get; private set; }
+    private SteamVR_Action_Vector2 TouchpadAction;
+    public SteamVR_Action_Vector2 touchpadAction
+    {
+        get
+        {
+            return TouchpadAction;
+        }
+        set
+        {
+            TouchpadAction = value;
+        }
     }
+
+    //public SteamVR_Action_Single triggerAction { get; private set; }
+
+    //For TriggerHaptics
+    public SteamVR_Action_Vibration haptics;
+    //public SteamVR_Action_Boolean triggerHapticAction;
+
+    //End Chandan Changes
+    private SteamVR_TrackedObject _trackedObj;
 
     private bool _isPointerMode = false;
     public bool IsPointerMode {
@@ -55,77 +79,122 @@ public class ViveStrokeReader : MonoBehaviour {
         _isPointerMode = setting;
     }
 
-    void Awake () {
-        _trackedObj = GetComponent<SteamVR_TrackedObject>();
-        _drawParent = _defaultDrawParent;
+    void Awake()
+    {
+        try
+        {
+            _trackedObj = GetComponent<SteamVR_TrackedObject>();
+            _drawParent = _defaultDrawParent;
+        }
+
+        catch (Exception e)
+        {
+            Debug.LogException(e, this);
+        }
     }
 
     // Update is called once per frame
-    void Update () {
-        // Might wanna do this less
-        _cursor.SetActive(!(_isPointerMode || _isSelectorMode));
+    void Update()
+    {
 
-        // Only start drawing if not pointing at menu
-        if (Controller.GetHairTriggerDown() && CanDraw) {
-            _isTriggerHeld = true;
-            _toolManager.StartStroke(DrawParent);
-            _pressTime = 0;
-        }
+        try
+        {
+            // Might wanna do this less
+            _cursor.SetActive(!(_isPointerMode || _isSelectorMode));
 
-        if (Controller.GetHairTriggerUp() && _isTriggerHeld) {
-            _isTriggerHeld = false;
-            _toolManager.EndStroke(DrawParent);
-            
-            if (!_toolManager.IsStrokeTool && _pressTime > LONG_PRESS_TIME) {
-                _toolManager.EndTriangle(DrawParent);
-            }
-        }
-
-        if (_isTriggerHeld || !_toolManager.IsStrokeTool) {
-            // Make cursor point relative to current parent (Trackers / World Drawing)
-            Vector3 currentPos = DrawParent.InverseTransformPoint(_cursor.transform.position);
-
-            // We might need to add more sophisticated position smoothing than this
-            if (Vector3.Distance(currentPos, _lastPos) >= _moveThreshold)
+            // Only start drawing if not pointing at menu
+            if (SteamVR_Actions._default.GrabPinch.GetStateDown(SteamVR_Input_Sources.RightHand) && CanDraw)
             {
-                _toolManager.UpdateStroke(currentPos, transform.rotation, _currentRadius);
-                _lastPos = currentPos;
+                _isTriggerHeld = true;
+                _toolManager.StartStroke(DrawParent);
+                _pressTime = 0;
             }
-        }
 
-        if (_isTriggerHeld) {
-            _pressTime += Time.deltaTime;
-            if (!_toolManager.IsStrokeTool && _pressTime > LONG_PRESS_TIME) {
-                Controller.TriggerHapticPulse(500, EVRButtonId.k_EButton_SteamVR_Trigger);
-            }
-        }
+            if (SteamVR_Actions._default.GrabPinch.GetStateUp(SteamVR_Input_Sources.RightHand) && _isTriggerHeld)
+            {
+                _isTriggerHeld = false;
+                _toolManager.EndStroke(DrawParent);
 
-        // Radius Change
-        bool currentTouch = Controller.GetTouch(SteamVR_Controller.ButtonMask.Touchpad);
-        if (currentTouch && _isTouchHeld) {
-            Vector2 axis = Controller.GetAxis();
-            float dx = axis.x - _prevTouch.x;
-            
-            // Use threshold
-            if (dx > 0.0001 || dx < -0.0001) {
-                float newScale = _radiusScale + dx;
-
-                // Clamp scale so it doesn't break
-                if (newScale < 6.5f && newScale > 0.15f) {
-                    _radiusScale = newScale;
-                    _currentRadius = _radiusScale * _defaultScale;
-
-                    // Scale the cursor
-                    float s = (_currentRadius) - _cursor.transform.localScale.x;
-                    _cursor.transform.localScale += new Vector3(s,s,s);
+                if (!_toolManager.IsStrokeTool && _pressTime > LONG_PRESS_TIME)
+                {
+                    _toolManager.EndTriangle(DrawParent);
                 }
             }
 
-            _prevTouch = axis;
-        } else if (currentTouch) {
-            _prevTouch = Controller.GetAxis();
+            if (_isTriggerHeld || !_toolManager.IsStrokeTool)
+            {
+                // Make cursor point relative to current parent (Trackers / World Drawing)
+                Vector3 currentPos = DrawParent.InverseTransformPoint(_cursor.transform.position);
+
+                // We might need to add more sophisticated position smoothing than this
+                if (Vector3.Distance(currentPos, _lastPos) >= _moveThreshold)
+                {
+                    _toolManager.UpdateStroke(currentPos, transform.rotation, _currentRadius);
+                    _lastPos = currentPos;
+                }
+            }
+
+            if (_isTriggerHeld)
+            {
+                _pressTime += Time.deltaTime;
+                if (!_toolManager.IsStrokeTool && _pressTime > LONG_PRESS_TIME)
+                {
+                    //Controller.TriggerHapticPulse(500, EVRButtonId.k_EButton_SteamVR_Trigger);
+                    if (SteamVR_Actions._default.GrabPinch.GetStateDown(SteamVR_Input_Sources.RightHand))
+                    {
+                        Pulse(1, 50, 75, SteamVR_Input_Sources.RightHand);
+                    }
+
+                }
+            }
+
+            // Radius Change
+            Vector2 touchpadValue = TouchpadAction.GetAxis(SteamVR_Input_Sources.RightHand);
+            Debug.Log("TouchPad value in VIVEStrokeReader------->"+touchpadValue);
+            bool currentTouch = touchpadValue != Vector2.zero ? true : false;
+
+            if (currentTouch && _isTouchHeld)
+            {
+                Vector2 axis = touchpadValue;
+                float dx = axis.x - _prevTouch.x;
+
+                // Use threshold
+                if (dx > 0.0001 || dx < -0.0001)
+                {
+                    float newScale = _radiusScale + dx;
+
+                    // Clamp scale so it doesn't break
+                    if (newScale < 6.5f && newScale > 0.15f)
+                    {
+                        _radiusScale = newScale;
+                        _currentRadius = _radiusScale * _defaultScale;
+
+                        // Scale the cursor
+                        float s = (_currentRadius) - _cursor.transform.localScale.x;
+                        _cursor.transform.localScale += new Vector3(s, s, s);
+                    }
+                }
+
+                _prevTouch = axis;
+            }
+            else if (currentTouch)
+            {
+                _prevTouch = touchpadValue;
+            }
+
+            _isTouchHeld = currentTouch;
         }
 
-        _isTouchHeld = currentTouch;
+        catch (Exception e)
+        {
+            Debug.Log("!!!!!!!Exception occured!!!!!!!");
+            Debug.LogException(e, this);
+        }
+    }
+
+    public void Pulse(float duration, float frequency, float amplitude, SteamVR_Input_Sources source)
+    {
+        haptics.Execute(0, duration, frequency, amplitude, source); //0(First Parameter): duration after which haptics should start.
+        //print("Pulse from :------>" + source.ToString());
     }
 }
