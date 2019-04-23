@@ -33,32 +33,13 @@ public class ViveStrokeReader : MonoBehaviour {
 
 
     //Start Chandan Changes 
-
-    //private SteamVR_Controller.Device Controller {
-    //    get { return SteamVR_Controller.Input((int)_trackedObj.index); }
-    //}
-
-    //public SteamVR_Action_Vector2 TouchpadAction { get; private set; }
-    private SteamVR_Action_Vector2 TouchpadAction;
-    public SteamVR_Action_Vector2 touchpadAction
-    {
-        get
-        {
-            return TouchpadAction;
-        }
-        set
-        {
-            TouchpadAction = value;
-        }
-    }
-
-    //public SteamVR_Action_Single triggerAction { get; private set; }
+    //To read touchpad position values
+    public SteamVR_Action_Vector2 TouchpadAction;
 
     //For TriggerHaptics
     public SteamVR_Action_Vibration haptics;
-    //public SteamVR_Action_Boolean triggerHapticAction;
-
     //End Chandan Changes
+
     private SteamVR_TrackedObject _trackedObj;
 
     private bool _isPointerMode = false;
@@ -116,7 +97,7 @@ public class ViveStrokeReader : MonoBehaviour {
                 if(BrushSensorPolling.IsBristleBent[0] || BrushSensorPolling.IsBristleBent[1] || BrushSensorPolling.IsBristleBent[2] ||
                     BrushSensorPolling.IsBristleBent[3] || BrushSensorPolling.IsBristleBent[4] || BrushSensorPolling.IsBristleBent[5]){
                      _isTriggerHeld = true;
-                    _toolManager.StartStroke(DrawParent);
+                    _toolManager.StartStroke(DrawParent, BrushSensorPolling.IsBristleBent );
                      _pressTime = 0;
                  }
                  else{
@@ -169,7 +150,6 @@ public class ViveStrokeReader : MonoBehaviour {
 
             // Radius Change
             Vector2 touchpadValue = TouchpadAction.GetAxis(SteamVR_Input_Sources.RightHand);
-            Debug.Log("TouchPad value in VIVEStrokeReader------->"+touchpadValue);
             bool currentTouch = touchpadValue != Vector2.zero ? true : false;
 
             if (currentTouch && _isTouchHeld)

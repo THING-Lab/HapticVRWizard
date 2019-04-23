@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using UnityEngine;
+using System.Runtime.InteropServices;
 
 public class ToolManager : MonoBehaviour {
  public RibbonTool _ribbonTool;
@@ -101,7 +102,7 @@ public class ToolManager : MonoBehaviour {
         _isMidTriangle = false;
     }
 
-    public void StartStroke(Transform parent)
+    public void StartStroke(Transform parent, [Optional] bool[] bristles)
     {
         if (!_isMidTriangle)
         {

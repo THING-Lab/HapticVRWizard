@@ -12,22 +12,8 @@ public class ViveMenuReader : MonoBehaviour {
 
     //Start Chandan Changes 
 
-    //private SteamVR_Controller.Device Controller {
-    //    get { return SteamVR_Controller.Input((int)_trackedObj.index); }
-    //}
-
-    private SteamVR_Action_Vector2 TouchpadAction;
-    public SteamVR_Action_Vector2 touchpadAction
-    {
-        get
-        {
-            return TouchpadAction;
-        }
-        set
-        {
-            TouchpadAction = value;
-        }
-    }
+    //To read touchpad position values
+    public SteamVR_Action_Vector2 TouchpadAction;
 
     //End Chandan Changes
 
@@ -55,10 +41,9 @@ public class ViveMenuReader : MonoBehaviour {
         try
         {
             Vector2 touchpadValue = TouchpadAction.GetAxis(SteamVR_Input_Sources.LeftHand);
-            Debug.Log("TouchPad value in VIVEMenuReader------->" + touchpadValue);
             bool currentTouch = touchpadValue != Vector2.zero ? true : false;
 
-            //if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
+            //When TouchPad button is pressed
             if(SteamVR_Actions._default.Teleport.GetStateDown(SteamVR_Input_Sources.Any))
             {
                 Vector2 axis = touchpadValue;

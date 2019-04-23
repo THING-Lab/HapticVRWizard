@@ -88,7 +88,7 @@ public class TubeDraw : StrokeDraw {
 				Vector3 prevPerp = Vector3.Cross(_pointsList[pointIndex - 1] - _pointsList[pointIndex - 2], _prevNormal);
 				ringNormal = Vector3.Cross(prevPerp, point - _pointsList[pointIndex - 1]).normalized;
 			}
-			// End pinch draw copy pasta
+			// End pinch draw copy paste
 
 			// Clear out mesh end cap
 			if (_pointsList.Count > 3) {
