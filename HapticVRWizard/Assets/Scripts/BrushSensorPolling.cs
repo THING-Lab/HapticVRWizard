@@ -7,7 +7,6 @@
  */
 
 using UnityEngine;
-using System.Collections;
 
 /**
  * Sample for reading using polling by yourself, and writing too.
@@ -21,20 +20,20 @@ public class BrushSensorPolling : MonoBehaviour
 
     public static bool[] IsBristleBent;
     public bool[] test;
-    
-    private int [] bristleCalibrationBend = {600, 600, 600, 600, 600, 600 };
-    private int [] currentBristleBend = { 600, 600, 600, 600, 600, 600 };
+
+    private int[] bristleCalibrationBend = { 600, 600, 600, 600, 600, 600 };
+    private int[] currentBristleBend = { 600, 600, 600, 600, 600, 600 };
     public float bristleAngleScalefactor = 0.1f;
     public float bristleNegativeThreshold = 0.2f;
     public float bendThreshold = 2;
 
     // Initialization
-    void Start()
+    void Awake()
     {
         //Make sure SerialContoller Game object is in Hirarchy and has SerialController Script attatched
         //Also make sure Port name on script is correct Com Port fro the arduino
         serialController = GameObject.Find("SerialController").GetComponent<SerialController>();
-
+        setBristleCalibrationBend();
 
         Brush = GameObject.FindWithTag("Brush");
         //Find bristles to set location and rotation
@@ -44,14 +43,14 @@ public class BrushSensorPolling : MonoBehaviour
         bristle_D = GameObject.FindWithTag("Bristle_D");
         bristle_E = GameObject.FindWithTag("Bristle_E");
         bristle_F = GameObject.FindWithTag("Bristle_F");
-        
-        if(Brush == null)
+
+        if (Brush == null)
             Debug.Log("Brush Not Found!");
-           
-       IsBristleBent = new bool[6];
-       test = new bool[6];
-      
-        
+
+        IsBristleBent = new bool[6];
+        test = new bool[6];
+
+
     }
 
     // Executed each frame
@@ -60,25 +59,25 @@ public class BrushSensorPolling : MonoBehaviour
         //---------------------------------------------------------------------
         // Send data
         //---------------------------------------------------------------------
-        if(Brush == null)
+        if (Brush == null)
             Debug.Log("Brush Not Found!");
-        if(bristle_A == null)
+        if (bristle_A == null)
             Debug.Log("Brush Not Found!");
-        
+
         //Set Burshs in the correct positin relative to their parent(Bristle_XP)
-        bristle_A.transform.localPosition = new Vector3 (-1.3f, 0f, 0);
-        bristle_B.transform.localPosition = new Vector3 (-1.3f, 0f, 0);
-        bristle_C.transform.localPosition = new Vector3 (-1.3f, 0f, 0);
-        bristle_D.transform.localPosition = new Vector3 (-1.3f, 0f, 0);
-        bristle_E.transform.localPosition = new Vector3 (-1.3f, 0f, 0);
-        bristle_F.transform.localPosition = new Vector3 (-1.3f, 0f, 0);
-        
+        bristle_A.transform.localPosition = new Vector3(-1.3f, 0f, 0);
+        bristle_B.transform.localPosition = new Vector3(-1.3f, 0f, 0);
+        bristle_C.transform.localPosition = new Vector3(-1.3f, 0f, 0);
+        bristle_D.transform.localPosition = new Vector3(-1.3f, 0f, 0);
+        bristle_E.transform.localPosition = new Vector3(-1.3f, 0f, 0);
+        bristle_F.transform.localPosition = new Vector3(-1.3f, 0f, 0);
+
         //Set Bristles to Flat Position 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             setBristleCalibrationBend();
         }
-        
+
         //Pulling Data From Arduino Serial Port
         serialController.SendSerialMessage("A");
         receiveMessage();
@@ -111,7 +110,8 @@ public class BrushSensorPolling : MonoBehaviour
     }
 
 
-    private float getBristleAngle (int bristleID) {
+    private float getBristleAngle(int bristleID)
+    {
         //Calculate how far to bent the Bristles based on Flexsensor values
         float bend = bristleCalibrationBend[bristleID] - currentBristleBend[bristleID];
         bend *= bristleAngleScalefactor; // multiply with the scale factor
@@ -122,10 +122,11 @@ public class BrushSensorPolling : MonoBehaviour
         return bend;
     }
 
-    private void setBristleCalibrationBend()
+    public void setBristleCalibrationBend()
     {
         //Calibrating bristles to a set starting position
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++)
+        {
             bristleCalibrationBend[i] = currentBristleBend[i];
         }
     }
@@ -135,38 +136,43 @@ public class BrushSensorPolling : MonoBehaviour
         //Bends Bristles After all calculations are made
         GameObject bristle;
 
-        for (int i = 0; i < 6; i++) {
-            
+        for (int i = 0; i < 6; i++)
+        {
+
             switch (i) // select the right game object bristle by it's name in the scene.
             {
-                case 0: bristle = bristle_A;  break;
-                case 1: bristle = bristle_B;  break;
-                case 2: bristle = bristle_C;  break;
-                case 3: bristle = bristle_D;  break;
-                case 4: bristle = bristle_E;  break;
-                case 5: bristle = bristle_F;  break;
+                case 0: bristle = bristle_A; break;
+                case 1: bristle = bristle_B; break;
+                case 2: bristle = bristle_C; break;
+                case 3: bristle = bristle_D; break;
+                case 4: bristle = bristle_E; break;
+                case 5: bristle = bristle_F; break;
                 default: bristle = GameObject.FindWithTag("").gameObject; break;
             }
-            if(bristle == null)
+            if (bristle == null)
                 Debug.Log("Bristle Not Found!");
-            else{
+            else
+            {
 
-                float angle = backBend(i); 
-            if(angle > 5 || angle < -5){
-                IsBristleBent[i] = true;
-                test[i] = true;
-            }
-            else{
-                 IsBristleBent[i] = false;
-                test[i] = false;
-            }
-            //Rotates around parent pivot location Bristle_XP
-            bristle.transform.parent.localRotation = Quaternion.Euler(new Vector3(0, angle, 0));
-           
+                float angle = backBend(i);
+                if (angle > 5 || angle < -5)
+                {
+                    IsBristleBent[i] = true;
+                    test[i] = true;
+                }
+                else
+                {
+                    IsBristleBent[i] = false;
+                    test[i] = false;
+                }
+                //Rotates around parent pivot location Bristle_XP
+                bristle.transform.parent.localRotation = Quaternion.Euler(new Vector3(0, angle, 0));
+
             }
         }
     }
-    private float backBend (int bristleID) {
+    private float backBend(int bristleID)
+    {
         //Allows bristle to bend backwards if bend back to a certain degree 
         //and neighbor bristle is also bending backwards 
         //Since flex sensors can only read values bending one way
@@ -182,13 +188,13 @@ public class BrushSensorPolling : MonoBehaviour
 
         if (bristleID % 2 == 0 && bend <= -bendThreshold && neighborBend <= -bendThreshold)
         {
-             bend = neighborBend;
+            bend = neighborBend;
         }
-         if (bristleID % 2 != 0 && bend >= bendThreshold && neighborBend >= bendThreshold)
+        if (bristleID % 2 != 0 && bend >= bendThreshold && neighborBend >= bendThreshold)
         {
-             bend = neighborBend;
+            bend = neighborBend;
         }
-       
+
 
         return bend;
     }

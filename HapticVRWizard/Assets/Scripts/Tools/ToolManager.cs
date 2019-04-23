@@ -115,6 +115,7 @@ public class ToolManager : MonoBehaviour {
     {
         if (!_isMidTriangle)
         {
+            print("Brush Tool filling undo stack.");
             // Save command once the stroke has been completed for undo/redo
             ICommand command = (ICommand)_currentTool.EndStroke(parent, Mat);
             _undoStack.Push(command);

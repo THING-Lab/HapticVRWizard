@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using Valve.VR;
 
-public class ViveStrokeReader : MonoBehaviour {
+
+public class ViveStrokeReader : MonoBehaviour
+{
     private bool _isTriggerHeld = false;
+    private bool _areBristlesDown = false;
     private bool _isTouchHeld = false;
     private Vector2 _prevTouch = new Vector2(0, 0);
     public float _moveThreshold = 0.005f;
@@ -26,7 +27,8 @@ public class ViveStrokeReader : MonoBehaviour {
 
     public Transform _defaultDrawParent;
     private Transform _drawParent;
-    public Transform DrawParent {
+    public Transform DrawParent
+    {
         get { return _drawParent; }
         set { _drawParent = value; }
     }
@@ -44,26 +46,31 @@ public class ViveStrokeReader : MonoBehaviour {
 
     private bool _isPointerMode = false;
 
-    public bool IsPointerMode {
+    public bool IsPointerMode
+    {
         get { return _isPointerMode; }
     }
 
     private bool _isSelectorMode = false;
-    public bool IsSelectorMode {
+    public bool IsSelectorMode
+    {
         get { return _isSelectorMode; }
         set { _isSelectorMode = value; }
     }
 
-    private bool CanDraw {
+    private bool CanDraw
+    {
         get { return (!_isPointerMode && !_isSelectorMode); }
-    } 
+    }
 
-    public bool IsBrushTool{
-        get{return (ToolManager.isBrushTool);}
+    public bool IsBrushTool
+    {
+        get { return (ToolManager.isBrushTool); }
     }
 
     // REPLACE THIS WITH PROPERTY
-    public void SetPointerMode(bool setting) {
+    public void SetPointerMode(bool setting)
+    {
         _isPointerMode = setting;
     }
 
@@ -91,22 +98,29 @@ public class ViveStrokeReader : MonoBehaviour {
             _cursor.SetActive(!(_isPointerMode || _isSelectorMode));
             _model.SetActive(_isPointerMode || _isSelectorMode);
             // Only start drawing if not pointing at menu
-            if (SteamVR_Actions._default.GrabPinch.GetStateDown(SteamVR_Input_Sources.RightHand) && CanDraw)
+            if (SteamVR_Actions._default.GrabPinch.GetStateDown(SteamVR_Input_Sources.RightHand) && CanDraw && !IsBrushTool)
             {
-                if(IsBrushTool){
-                if(BrushSensorPolling.IsBristleBent[0] || BrushSensorPolling.IsBristleBent[1] || BrushSensorPolling.IsBristleBent[2] ||
-                    BrushSensorPolling.IsBristleBent[3] || BrushSensorPolling.IsBristleBent[4] || BrushSensorPolling.IsBristleBent[5]){
-                     _isTriggerHeld = true;
-                    _toolManager.StartStroke(DrawParent, BrushSensorPolling.IsBristleBent );
-                     _pressTime = 0;
-                 }
-                 else{
-                     _isTriggerHeld = false;
-                    }
-                }else{
                 _isTriggerHeld = true;
                 _toolManager.StartStroke(DrawParent);
                 _pressTime = 0;
+            }
+
+            if (IsBrushTool && !SteamVR_Actions._default.GrabPinch.GetStateDown(SteamVR_Input_Sources.RightHand) && CanDraw)
+            {
+                if (BrushSensorPolling.IsBristleBent[0] || BrushSensorPolling.IsBristleBent[1] || BrushSensorPolling.IsBristleBent[2] ||
+                    BrushSensorPolling.IsBristleBent[3] || BrushSensorPolling.IsBristleBent[4] || BrushSensorPolling.IsBristleBent[5])
+                {
+                    _isTriggerHeld = true;
+                    _areBristlesDown = true;
+                    _toolManager.StartStroke(DrawParent);
+                    _pressTime = 0;
+                }
+
+                else if(_areBristlesDown)
+                {
+                    _isTriggerHeld = false;
+                    _toolManager.EndStroke(DrawParent);
+                    _areBristlesDown = false;
                 }
             }
 

@@ -99,6 +99,7 @@ public class ViveUIPointer : MonoBehaviour {
                     if (SteamVR_Actions._default.GrabPinch.GetStateDown(SteamVR_Input_Sources.RightHand))
                     {
                         // Should I create an Interface for this?
+                        print("In UIPointer MenuToggle");
                         hitInfo.collider.gameObject.GetComponent<ViveMenuToggle>().Execute();
                     }
                 }

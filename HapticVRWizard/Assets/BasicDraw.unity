@@ -183,7 +183,7 @@ PrefabInstance:
       objectReference: {fileID: 1119164187}
     - target: {fileID: 2348914, guid: 4d293c8e162f3874b982baadd71153d2, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3380982, guid: 4d293c8e162f3874b982baadd71153d2, type: 3}
       propertyPath: m_Mesh
@@ -5855,6 +5855,11 @@ PrefabInstance:
       propertyPath: serialController
       value: 
       objectReference: {fileID: 1791638356}
+    - target: {fileID: 114641460788848526, guid: 116d3b1ce1f8a5a4c82c1c0b100a28c0,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 116d3b1ce1f8a5a4c82c1c0b100a28c0, type: 3}
 --- !u!1 &1733097986
