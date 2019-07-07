@@ -23,7 +23,11 @@ public class TCPTestServer : MonoBehaviour {
 	/// </summary> 	
 	private TcpClient connectedTcpClient; 	
 	#endregion 	
-		
+	
+	public GameObject objectToAccess;
+	bool haveRotationMessage = false;
+	string clientMessage;
+
 	// Use this for initialization
 	void Start () { 		
 		// Start TcpServer background thread 		
@@ -37,6 +41,12 @@ public class TCPTestServer : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Space)) {             
 			SendMessage();         
 		} 	
+
+		if (haveRotationMessage)
+		{
+			objectToAccess.GetComponent<moveKyleTcp>().moveFromTcp(float.Parse(clientMessage));	
+			haveRotationMessage = false;
+		}
 	}  	
 	
 	/// <summary> 	
@@ -45,9 +55,9 @@ public class TCPTestServer : MonoBehaviour {
 	private void ListenForIncommingRequests () { 		
 		try { 			
 			// Create listener on localhost port 8052. 			
-			// tcpListener = new TcpListener(IPAddress.Parse("127.0.0.1"), 8052); 		
-			tcpListener = new TcpListener(IPAddress.Any, 8052); 		
-			// tcpListener = new TcpListener(Dns.Resolve("localhost").AddressList[0], 8052); 		
+			// tcpListener = new TcpListener(IPAddress.Parse("127.0.0.1"), 8052); // this line came with the example but it only listens for local clients
+			tcpListener = new TcpListener(IPAddress.Any, 8052); // this listens to all traffic to port 8052
+			// send TCP messages from terminal with `$ netcat localhost 8052`
 			tcpListener.Start();              
 			Debug.Log("Server is listening");              
 			Byte[] bytes = new Byte[1024];  			
@@ -61,8 +71,9 @@ public class TCPTestServer : MonoBehaviour {
 							var incommingData = new byte[length]; 							
 							Array.Copy(bytes, 0, incommingData, 0, length);  							
 							// Convert byte array to string message. 							
-							string clientMessage = Encoding.ASCII.GetString(incommingData); 							
-							Debug.Log("client message received as: " + clientMessage); 						
+							clientMessage = Encoding.ASCII.GetString(incommingData); 							
+							Debug.Log("client message received as: " + clientMessage);
+							haveRotationMessage = true;
 						} 					
 					} 				
 				} 			
