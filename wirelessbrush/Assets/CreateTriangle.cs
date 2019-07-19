@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CreateTriangle : MonoBehaviour
 {
-
     Mesh ribbon;
     List<Vector3> bristleLocations = new List<Vector3>(); // save every bristle position
     List<int> ribbonVertices = new List<int>(); // make triangles from the vertices
@@ -29,6 +28,7 @@ public class CreateTriangle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
 
