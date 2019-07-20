@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CreateTriangle : MonoBehaviour
 {
+    public GameObject inputAnchor;
+    public List<GameObject> bristlesList = new List<GameObject>(5);
+
     Mesh ribbon;
     List<Vector3> bristleLocations = new List<Vector3>(); // save every bristle position
     List<int> ribbonVertices = new List<int>(); // make triangles from the vertices
@@ -53,7 +56,15 @@ public class CreateTriangle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Time.frameCount % 20 == 0)
+        {
+            for (int i = 0; i < bristles; i++)
+            {
+                GameObject sphere2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                sphere2.transform.position = bristlesList[i].GetComponent<Transform>().position;
+                sphere2.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
+            }
+        }
     }
 
     //////////////////////////////
@@ -70,7 +81,7 @@ public class CreateTriangle : MonoBehaviour
                 Vector3 positionOfBristleTip = new Vector3(i*sphereDistance, j*sphereDistance, 0);
                 sphere.transform.position = positionOfBristleTip;
                 bristleLocations.Add(positionOfBristleTip); // this inefficiently stores every single bristle position, even if it will not be used because the sensor is not activited
-                sphere.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                sphere.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                 Renderer rend = sphere.GetComponent<Renderer>();
                 if (brushHistory[i,j])
                 {

@@ -10,17 +10,17 @@ public class MoveBrush : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        gameObject.transform.localScale = new Vector3(25f, 25f, 25f);
-        gameObject.transform.position = new Vector3(0f, 1f, -12f);
-        gameObject.transform.Rotate(0f, 180f, 90f, Space.World);
+        // gameObject.transform.localScale = new Vector3(25f, 25f, 25f);
+        // gameObject.transform.position = new Vector3(0f, 1f, -12f);
+        // gameObject.transform.Rotate(0f, 0f, 90f, Space.Self);
         
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 movingBrushDirection = new Vector3(0.1f, 0f, 0f);
-        gameObject.transform.Translate(movingBrushDirection*Time.deltaTime, Space.World);
+        Vector3 movingBrushDirection = new Vector3(0.2f, 0f, 0f);
+        gameObject.transform.Translate(movingBrushDirection*Time.deltaTime, Space.Self);
         
     }
 }
