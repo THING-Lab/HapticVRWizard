@@ -1,11 +1,12 @@
 using System;
-using System.Collections; 
-using System.Collections.Generic; 
-using System.Net; 
-using System.Net.Sockets; 
-using System.Text; 
-using System.Threading; 
-using UnityEngine;  
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using UnityEngine;
 
 public class TCPTestServer : MonoBehaviour {  	
 	#region private members 	
@@ -25,8 +26,9 @@ public class TCPTestServer : MonoBehaviour {
 	#endregion 	
 	
 	public GameObject objectToAccess;
-	bool haveRotationMessage = false;
-	string clientMessage;
+	private bool haveMessage = false;
+	private string clientMessage;
+	// public ToolState latestJSON;
 
 	// Use this for initialization
 	void Start () { 		
@@ -42,10 +44,13 @@ public class TCPTestServer : MonoBehaviour {
 			SendMessage();         
 		} 	
 
-		if (haveRotationMessage)
+		if (haveMessage)
 		{
-			objectToAccess.GetComponent<moveKyleTcp>().moveFromTcp(float.Parse(clientMessage));	
-			haveRotationMessage = false;
+			// Global.latestJSON = JsonUtility.FromJson<ToolState>(clientMessage);
+			// Debug.Log(Global.latestJSON.tool);
+			Debug.Log("Tool is " + Global.latestJSON.tool + " and D8 state is " + Global.latestJSON.D8);
+			// objectToAccess.GetComponent<moveKyleTcp>().moveFromTcp(float.Parse(clientMessage));	
+			haveMessage = false;
 		}
 	}  	
 	
@@ -60,24 +65,42 @@ public class TCPTestServer : MonoBehaviour {
 			// send TCP messages from terminal with `$ netcat localhost 8052`
 			tcpListener.Start();              
 			Debug.Log("Server is listening");              
-			Byte[] bytes = new Byte[1024];  			
-			while (true) { 				
-				using (connectedTcpClient = tcpListener.AcceptTcpClient()) { 					
-					// Get a stream object for reading 					
-					using (NetworkStream stream = connectedTcpClient.GetStream()) { 						
-						int length; 						
-						// Read incomming stream into byte arrary. 						
-						while ((length = stream.Read(bytes, 0, bytes.Length)) != 0) { 							
-							var incommingData = new byte[length]; 							
-							Array.Copy(bytes, 0, incommingData, 0, length);  							
-							// Convert byte array to string message. 							
-							clientMessage = Encoding.ASCII.GetString(incommingData); 							
-							Debug.Log("client message received as: " + clientMessage);
-							haveRotationMessage = true;
-						} 					
-					} 				
-				} 			
-			} 		
+			Byte[] bytes = new Byte[1024];  		
+
+			while (true) {
+                // ISSUE: I BELIEVE THIS ONLY CREATES ONE THREAD FOR ALL LISTENERS :?
+                using (connectedTcpClient = tcpListener.AcceptTcpClient()) {
+                Debug.Log("client connected");
+                    // Get a stream object for reading
+                    using (NetworkStream stream = connectedTcpClient.GetStream()) {
+                        StreamReader reader = new StreamReader(stream, Encoding.ASCII);
+                        while(true) {
+                            string clientMessage = reader.ReadLine();
+							Global.latestJSON = JsonUtility.FromJson<ToolState>(clientMessage);
+                            // ct = JsonUtility.FromJson<CameraTransform>(json);
+                            haveMessage = true;
+                        }               
+                    }               
+                }           
+            } 
+
+			// while (true) { 				
+			// 	using (connectedTcpClient = tcpListener.AcceptTcpClient()) {
+			// 		// Get a stream object for reading
+			// 		using (NetworkStream stream = connectedTcpClient.GetStream()) {
+			// 			int length;
+			// 			// Read incomming stream into byte arrary.
+			// 			while ((length = stream.Read(bytes, 0, bytes.Length)) != 0) {
+			// 				var incommingData = new byte[length];
+			// 				Array.Copy(bytes, 0, incommingData, 0, length);
+			// 				// Convert byte array to string message.
+			// 				clientMessage = Encoding.ASCII.GetString(incommingData); 							
+			// 				Debug.Log("client message received as: " + clientMessage);
+			// 				haveMessage = true;
+			// 			} 					
+			// 		} 				
+			// 	} 			
+			// } 		
 		} 		
 		catch (SocketException socketException) { 			
 			Debug.Log("SocketException " + socketException.ToString()); 		
@@ -107,4 +130,25 @@ public class TCPTestServer : MonoBehaviour {
 			Debug.Log("Socket exception: " + socketException);         
 		} 	
 	} 
+}
+
+public class ToolState {
+	public string tool;
+	public int D0;
+	public int D1;
+	public int D2;
+	public int D5;
+	public int D6;
+	public int D7;
+	public int D8;
+	
+	public ToolState() {
+		// Debug.Log("doing something"); // nothing
+	}
+		
+
+}
+
+public class Global {
+	public static ToolState latestJSON;
 }
