@@ -7,6 +7,7 @@ public class CreateTriangle : MonoBehaviour
     public GameObject inputAnchor;
     public List<GameObject> bristlesList = new List<GameObject>(5);
     public bool randomBristleActivation;
+    public float brushWidth;
 
     // Mesh ribbon;
     Mesh ribbon2;
@@ -32,21 +33,36 @@ public class CreateTriangle : MonoBehaviour
         
         Renderer rendOther = gameObject.GetComponent<Renderer>();
         rendOther.material.SetColor("_Color", new Color(1f, 0.5f, 0.5f, .7f));
+
+        // foreach (GameObject br in bristlesList)
+        // {
+            
+        //     br.transform.localPosition = new Vector3(0f, 0f, 0f);
+        // }
+
+        for (int p = 0; p < bristles; p++)
+        {
+            Vector3 localPos = new Vector3(0f, -brushWidth/2 + brushWidth*p/5 , 3.69f);
+            bristlesList[p].transform.localPosition = localPos;
+        }
+        
+        
     }
 
     // Update is called once per frame
     bool skippedFirstSet = false;
     void Update()
     {
-        
-        if (Time.frameCount % 3 == 0 && (Global.latestJSON != null))
+        // Debug.Log("update active");
+        if (Time.frameCount % 3 == 0)
         {
-            
+            Debug.Log("third frame active");
             for (int j = 0; j < bristles; j++)
             {
                 
                 if (randomBristleActivation)
                 {
+                    // Debug.Log("random bristle active");
                     if (0 != (int) Mathf.Floor(Random.value * 5)) // add a true for bristle active state unless the floor of rand(0,5) is 0
                     {
                         bristlesActive.Add(true);
@@ -54,9 +70,10 @@ public class CreateTriangle : MonoBehaviour
                     {
                         bristlesActive.Add(false);
                     }
-                } else if (!randomBristleActivation)
+                } else if (!randomBristleActivation && (Global.latestJSON != null))
                 {
-                    if (Global.latestJSON.D8 != 0)
+                    // Debug.Log("NOT random bristle active");
+                    if (Global.latestJSON.D1 != 0)
                     {
                         bristlesActive.Add(true);
                     } else
