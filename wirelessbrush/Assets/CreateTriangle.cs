@@ -22,7 +22,7 @@ public class CreateTriangle : MonoBehaviour
 
     private List<bool> bristlesActive = new List<bool>();
 
-    private float sphereDistance = 0.75f;
+    // private float sphereDistance = 0.75f;
 
     // Start is called before the first frame update
     void Start()
@@ -34,11 +34,11 @@ public class CreateTriangle : MonoBehaviour
         GetComponent<MeshFilter>().mesh = ribbon2;
         
         Renderer rendOther = gameObject.GetComponent<Renderer>();
-        rendOther.material.SetColor("_Color", new Color(0.8f, 0.8f, 0.8f, .8f));
+        // rendOther.material.SetColor("_Color", new Color(0.8f, 0.8f, 0.8f, .8f));
 
         for (int p = 0; p < bristles; p++)
         {
-            Vector3 localPos = new Vector3(0f, -brushWidth/2 + brushWidth*p/5 , 3.69f);
+            Vector3 localPos = new Vector3(0f, -brushWidth/2 + brushWidth*p/5 , 0f);
             bristlesList[p].transform.localPosition = localPos;
         }
         
@@ -50,7 +50,8 @@ public class CreateTriangle : MonoBehaviour
     void Update()
     {
         // Debug.Log("update active");
-        if (Time.frameCount % 3 == 0)
+        // if (Time.frameCount % 3 == 0)
+        if (true) // this was limiting the paint sequence but now going full speed
         {
             // Debug.Log("third frame active");
             for (int j = 0; j < bristles; j++)
@@ -59,7 +60,7 @@ public class CreateTriangle : MonoBehaviour
                 if (randomBristleActivation)
                 {
                     // Debug.Log("random bristle active");
-                    if (0 != (int) Mathf.Floor(Random.value * 8)) // add a true for bristle active state unless the floor of rand(0,8) is 0
+                    if (0 != (int) Mathf.Floor(Random.value * 15)) // add a true for bristle active state unless the floor of rand(0,15) is 0
                     {
                         bristlesActive.Add(true);
                     } else 
@@ -81,21 +82,21 @@ public class CreateTriangle : MonoBehaviour
             }
             for (int i = 0; i < bristles; i++)
             {
-                GameObject sphere2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                // GameObject sphere2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 bristleLocations2.Add(bristlesList[i].GetComponent<Transform>().position);
                 triColors.Add(brushVisiblePart.GetComponent<Renderer>().material.color);
                 // // Debug.Log(brushVisiblePart.GetComponent<Renderer>().material.color.ToString());
                 // // Debug.Log("Num verts: " + bristleLocations2.Count + "\t num colors: " + triColors.Count);
-                sphere2.transform.position = bristleLocations2[bristleLocations2.Count-1];
-                sphere2.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
-                Renderer rend2 = sphere2.GetComponent<Renderer>();
-                if (bristlesActive[bristlesActive.Count - 5 + i])
-                {
-                    rend2.material.SetColor("_Color", Color.red);
-                } else
-                {
-                    rend2.material.SetColor("_Color", Color.black);
-                }
+                // sphere2.transform.position = bristleLocations2[bristleLocations2.Count-1];
+                // sphere2.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
+                // Renderer rend2 = sphere2.GetComponent<Renderer>();
+                // if (bristlesActive[bristlesActive.Count - 5 + i])
+                // {
+                //     rend2.material.SetColor("_Color", Color.red);
+                // } else
+                // {
+                //     rend2.material.SetColor("_Color", Color.black);
+                // }
             }
             if (skippedFirstSet)
             {
