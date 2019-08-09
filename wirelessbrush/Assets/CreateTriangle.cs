@@ -8,11 +8,13 @@ public class CreateTriangle : MonoBehaviour
     public List<GameObject> bristlesList = new List<GameObject>(5);
     public bool randomBristleActivation;
     public float brushWidth;
+    public GameObject brushVisiblePart;
 
     // Mesh ribbon;
     Mesh ribbon2;
     List<Vector3> bristleLocations2 = new List<Vector3>(); // save every bristle position
     List<int> ribbonVertices2 = new List<int>(); // make triangles from the vertices
+    List<Color> triColors = new List<Color>();
     private const int bristles = 5;
     private const int timeSamples = 6;
     private const int squaresAtOnce = bristles - 1; // number of squares to check at a time sample is one less than the number of bristles
@@ -25,20 +27,14 @@ public class CreateTriangle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {        
-        gameObject.AddComponent<MeshFilter>();
-        gameObject.AddComponent<MeshRenderer>();
+        // gameObject.AddComponent<MeshFilter>();
+        // gameObject.AddComponent<MeshRenderer>();
 
         ribbon2 = new Mesh();
         GetComponent<MeshFilter>().mesh = ribbon2;
         
         Renderer rendOther = gameObject.GetComponent<Renderer>();
-        rendOther.material.SetColor("_Color", new Color(1f, 0.5f, 0.5f, .7f));
-
-        // foreach (GameObject br in bristlesList)
-        // {
-            
-        //     br.transform.localPosition = new Vector3(0f, 0f, 0f);
-        // }
+        rendOther.material.SetColor("_Color", new Color(0.8f, 0.8f, 0.8f, .8f));
 
         for (int p = 0; p < bristles; p++)
         {
@@ -56,14 +52,14 @@ public class CreateTriangle : MonoBehaviour
         // Debug.Log("update active");
         if (Time.frameCount % 3 == 0)
         {
-            Debug.Log("third frame active");
+            // Debug.Log("third frame active");
             for (int j = 0; j < bristles; j++)
             {
                 
                 if (randomBristleActivation)
                 {
                     // Debug.Log("random bristle active");
-                    if (0 != (int) Mathf.Floor(Random.value * 5)) // add a true for bristle active state unless the floor of rand(0,5) is 0
+                    if (0 != (int) Mathf.Floor(Random.value * 8)) // add a true for bristle active state unless the floor of rand(0,8) is 0
                     {
                         bristlesActive.Add(true);
                     } else 
@@ -87,6 +83,9 @@ public class CreateTriangle : MonoBehaviour
             {
                 GameObject sphere2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 bristleLocations2.Add(bristlesList[i].GetComponent<Transform>().position);
+                triColors.Add(brushVisiblePart.GetComponent<Renderer>().material.color);
+                // // Debug.Log(brushVisiblePart.GetComponent<Renderer>().material.color.ToString());
+                // // Debug.Log("Num verts: " + bristleLocations2.Count + "\t num colors: " + triColors.Count);
                 sphere2.transform.position = bristleLocations2[bristleLocations2.Count-1];
                 sphere2.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
                 Renderer rend2 = sphere2.GetComponent<Renderer>();
@@ -109,6 +108,9 @@ public class CreateTriangle : MonoBehaviour
 
         Vector3[] bristleLocationsList2 = bristleLocations2.ToArray();
         ribbon2.vertices = bristleLocationsList2;
+
+        Color[] triColorsList = triColors.ToArray();
+        ribbon2.colors = triColorsList;
 
         int[] ribbonTrianglesList2 = ribbonTriangles2.ToArray();
         ribbon2.triangles = ribbonTrianglesList2;

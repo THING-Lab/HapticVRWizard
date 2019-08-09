@@ -321,6 +321,12 @@ Transform:
   m_Father: {fileID: 955323806}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &552116196 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8102921395503212252, guid: e2ab3989b481243eaad7a1ff514da878,
+    type: 3}
+  m_PrefabInstance: {fileID: 1929477631}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &621760115
 GameObject:
   m_ObjectHideFlags: 0
@@ -623,6 +629,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f97430b5c8acb449baa648b7543e05da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bucket: {fileID: 1774754910}
+  bucketVisiblePart: {fileID: 1200778237}
+  brushVisiblePart: {fileID: 552116196}
+  adoptDistance: 5
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -947,6 +957,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1135813273}
   - component: {fileID: 1135813272}
+  - component: {fileID: 1135813275}
+  - component: {fileID: 1135813274}
   m_Layer: 0
   m_Name: Triangle
   m_TagString: Untagged
@@ -974,7 +986,8 @@ MonoBehaviour:
   - {fileID: 1210713979}
   - {fileID: 398037578}
   randomBristleActivation: 1
-  brushWidth: 0.15
+  brushWidth: 1
+  brushVisiblePart: {fileID: 552116196}
 --- !u!4 &1135813273
 Transform:
   m_ObjectHideFlags: 0
@@ -989,6 +1002,53 @@ Transform:
   m_Father: {fileID: 63250140}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1135813274
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1135813271}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 506c90549b9ca4e32a1b0d904f9085d4, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &1135813275
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1135813271}
+  m_Mesh: {fileID: 0}
 --- !u!1 &1200778237 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -2254236119941121650, guid: c0709b25f7a594b95b9b9ed37eb32296,
@@ -1171,6 +1231,7 @@ MonoBehaviour:
   - {fileID: 1210537347}
   randomBristleActivation: 0
   brushWidth: 0
+  brushVisiblePart: {fileID: 0}
 --- !u!4 &1368654415
 Transform:
   m_ObjectHideFlags: 0
