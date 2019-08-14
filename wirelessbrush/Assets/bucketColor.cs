@@ -16,12 +16,12 @@ public class bucketColor : MonoBehaviour
         rend = GetComponent<Renderer>();
 
         //Set the main Color of the Material to green
-        rend.material.shader = Shader.Find("_Color");
-        rend.material.SetColor("_Color", Color.green);
+        // rend.material.shader = Shader.Find("_Color");
+        // rend.material.SetColor("_Color", Color.green);
 
         //Find the Specular shader and change its Color to red
-        rend.material.shader = Shader.Find("Specular");
-        rend.material.SetColor("_SpecColor", Color.red);
+        // rend.material.shader = Shader.Find("Specular");
+        // rend.material.SetColor("_SpecColor", Color.red);
     }
 
     // Update is called once per frame

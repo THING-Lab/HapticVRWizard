@@ -48,7 +48,7 @@ public class TCPTestServer : MonoBehaviour {
 		{
 			// Global.latestJSON = JsonUtility.FromJson<ToolState>(clientMessage);
 			// Debug.Log(Global.latestJSON.tool);
-			Debug.Log("Tool is " + Global.latestJSON.tool + " and D1 state is " + Global.latestJSON.D1);
+			Debug.Log("Tool is " + Global.latestJSON.tool + " and data state is " + Global.latestJSON.data);
 			// objectToAccess.GetComponent<moveKyleTcp>().moveFromTcp(float.Parse(clientMessage));	
 			haveMessage = false;
 		}
@@ -77,30 +77,11 @@ public class TCPTestServer : MonoBehaviour {
                         while(true) {
                             string clientMessage = reader.ReadLine();
 							Global.latestJSON = JsonUtility.FromJson<ToolState>(clientMessage);
-                            // ct = JsonUtility.FromJson<CameraTransform>(json);
                             haveMessage = true;
                         }               
                     }               
                 }           
-            } 
-
-			// while (true) { 				
-			// 	using (connectedTcpClient = tcpListener.AcceptTcpClient()) {
-			// 		// Get a stream object for reading
-			// 		using (NetworkStream stream = connectedTcpClient.GetStream()) {
-			// 			int length;
-			// 			// Read incomming stream into byte arrary.
-			// 			while ((length = stream.Read(bytes, 0, bytes.Length)) != 0) {
-			// 				var incommingData = new byte[length];
-			// 				Array.Copy(bytes, 0, incommingData, 0, length);
-			// 				// Convert byte array to string message.
-			// 				clientMessage = Encoding.ASCII.GetString(incommingData); 							
-			// 				Debug.Log("client message received as: " + clientMessage);
-			// 				haveMessage = true;
-			// 			} 					
-			// 		} 				
-			// 	} 			
-			// } 		
+            } 		
 		} 		
 		catch (SocketException socketException) { 			
 			Debug.Log("SocketException " + socketException.ToString()); 		
@@ -134,13 +115,7 @@ public class TCPTestServer : MonoBehaviour {
 
 public class ToolState {
 	public string tool;
-	public int D0;
-	public int D1;
-	public int D2;
-	public int D5;
-	public int D6;
-	public int D7;
-	public int D8;
+	public int data;
 	
 	public ToolState() {
 		// Debug.Log("doing something"); // nothing

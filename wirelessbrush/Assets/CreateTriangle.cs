@@ -70,7 +70,7 @@ public class CreateTriangle : MonoBehaviour
                 } else if (!randomBristleActivation && (Global.latestJSON != null))
                 {
                     // Debug.Log("NOT random bristle active");
-                    if (Global.latestJSON.D1 != 0)
+                    if (Global.latestJSON.data != 0 && Global.latestJSON.tool == "brush00")
                     {
                         bristlesActive.Add(true);
                     } else
