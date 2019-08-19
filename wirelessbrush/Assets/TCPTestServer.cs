@@ -48,7 +48,7 @@ public class TCPTestServer : MonoBehaviour {
 		{
 			// Global.latestJSON = JsonUtility.FromJson<ToolState>(clientMessage);
 			// Debug.Log(Global.latestJSON.tool);
-			Debug.Log("Tool is " + Global.latestJSON.tool + " and data state is " + Global.latestJSON.data);
+			Debug.Log("Tool is " + Global.latestJSON.tool + " and data is " + Global.latestJSON.data);
 			// objectToAccess.GetComponent<moveKyleTcp>().moveFromTcp(float.Parse(clientMessage));	
 			haveMessage = false;
 		}
