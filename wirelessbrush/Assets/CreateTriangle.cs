@@ -38,7 +38,7 @@ public class CreateTriangle : MonoBehaviour
 
         for (int p = 0; p < bristles; p++)
         {
-            Vector3 localPos = new Vector3(0f, -brushWidth/2 + brushWidth*p/5 , 0f);
+            Vector3 localPos = new Vector3(0f, -brushWidth/2 + brushWidth*p/4 , 0f);
             bristlesList[p].transform.localPosition = localPos;
         }
         

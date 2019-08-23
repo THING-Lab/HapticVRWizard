@@ -25,7 +25,7 @@ public class QTMObject : MonoBehaviour
             SixDOFBody trackedObj = rtClient.GetBody(objectName);
 
             if (!float.IsNaN(trackedObj.Position.sqrMagnitude)) {
-                transform.position = trackedObj.Position * 3;
+                transform.position = trackedObj.Position;
                 transform.rotation = trackedObj.Rotation;
             }
         }
