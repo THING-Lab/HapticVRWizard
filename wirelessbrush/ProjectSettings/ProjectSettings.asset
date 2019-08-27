@@ -65,7 +65,7 @@ PlayerSettings:
   disableDepthAndStencilBuffers: 1
   androidStartInFullscreen: 1
   androidRenderOutsideSafeArea: 1
-  androidUseSwappy: 0
+  androidUseSwappy: 1
   androidBlitType: 0
   defaultIsNativeResolution: 1
   macRetinaSupport: 1
@@ -133,7 +133,7 @@ PlayerSettings:
       enableTransitionView: 0
     daydream:
       depthFormat: 0
-      useSustainedPerformanceMode: 0
+      useSustainedPerformanceMode: 1
       enableVideoLayer: 0
       useProtectedVideoMemory: 0
       minimumSupportedHeadTracking: 0
@@ -164,7 +164,7 @@ PlayerSettings:
   applicationIdentifier: {}
   buildNumber: {}
   AndroidBundleVersionCode: 1
-  AndroidMinSdkVersion: 24
+  AndroidMinSdkVersion: 25
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 0
   aotOptions: 
@@ -405,8 +405,8 @@ PlayerSettings:
   - m_BuildTarget: Android
     m_Enabled: 1
     m_Devices:
+    - daydream
     - cardboard
-    - Oculus
   openGLRequireES31: 0
   openGLRequireES31AEP: 0
   openGLRequireES32: 0

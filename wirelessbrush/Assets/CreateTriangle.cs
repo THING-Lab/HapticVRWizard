@@ -50,8 +50,8 @@ public class CreateTriangle : MonoBehaviour
     void Update()
     {
         // Debug.Log("update active");
-        // if (Time.frameCount % 3 == 0)
-        if (true) // this was limiting the paint sequence but now going full speed
+        if (Time.frameCount % 5 == 0)
+        // if (true) // this was limiting the paint sequence but now going full speed
         {
             // Debug.Log("third frame active");
             for (int j = 0; j < bristles; j++)
